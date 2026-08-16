@@ -17,3 +17,4 @@ build/
 
 # 私密配置（API Key 等，请勿提交）
 config.js
+.env

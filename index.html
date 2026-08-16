@@ -3,767 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>回忆录访谈员</title>
+    <title>回忆录访谈员 · 把一生的故事讲给后人听</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { font-size: 18px; }
         body {
-            font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
-            background: #f5f0eb;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             min-height: 100vh;
-            padding: 16px;
-        }
-        .container {
-            width: 100%;
-            max-width: 860px;
-            background: #fffcf9;
-            border-radius: 24px;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
-            padding: 28px;
-        }
-        h1 {
-            font-size: 32px;
-            font-weight: 600;
-            color: #5a4a3a;
-            margin-bottom: 4px;
-        }
-        .subtitle {
-            font-size: 18px;
-            color: #a4937f;
-            margin-bottom: 18px;
-        }
-
-        /* ===== 语音开关 ===== */
-        .toggles {
-            display: flex;
-            gap: 14px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-        .toggle-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #faf6f1;
-            border: 1px solid #e6ddd2;
-            border-radius: 16px;
-            padding: 10px 16px;
-        }
-        .toggle-label { font-size: 20px; color: #4a3d30; cursor: pointer; }
-        .switch-state {
-            font-size: 19px;
-            font-weight: 600;
-            color: #7a6a58;
-            min-width: 2.4em;
-        }
-        .switch { position: relative; display: inline-block; width: 68px; height: 38px; flex-shrink: 0; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute; inset: 0;
-            background: #c9c2ba;
-            border-radius: 38px;
-            transition: 0.25s;
-            cursor: pointer;
-        }
-        .slider::before {
-            content: '';
-            position: absolute;
-            width: 30px; height: 30px;
-            left: 4px; top: 4px;
-            background: #fff;
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            transition: 0.25s;
-        }
-        .switch input:checked + .slider { background: #7aa05c; }
-        .switch input:checked + .slider::before { transform: translateX(30px); }
-        .switch input:disabled + .slider { opacity: 0.5; cursor: not-allowed; }
-        .dialect-select {
-            font-size: 20px;
-            padding: 10px 14px;
-            border: 2px solid #d8cdc0;
-            border-radius: 12px;
-            background: #fff;
-            color: #4a3d30;
-            font-family: inherit;
-            outline: none;
-            cursor: pointer;
-        }
-
-        /* ===== 聊天区 ===== */
-        .chat-box {
-            height: 440px;
-            overflow-y: auto;
-            padding: 18px;
-            background: #faf8f6;
-            border-radius: 18px;
-            margin-bottom: 16px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            align-items: center;
+            justify-content: center;
+            font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+            background: linear-gradient(160deg, #faf3e7 0%, #f2e6d3 45%, #e9d9c0 100%);
+            color: #4a3a2c;
+            padding: 48px 24px;
+            position: relative;
+            overflow-x: hidden;
         }
-        .message {
-            max-width: 88%;
-            padding: 14px 22px;
-            border-radius: 22px;
-            line-height: 1.75;
-            font-size: 21px;
-            animation: fadeIn 0.3s ease;
-        }
-        .message.ai {
-            background: #e8e0d8;
-            color: #3d342e;
-            align-self: flex-start;
-            border-bottom-left-radius: 6px;
-        }
-        .message.user {
-            background: #cbb9a8;
-            color: #2d241e;
-            align-self: flex-end;
-            border-bottom-right-radius: 6px;
-        }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ===== 输入区 ===== */
-        .input-area textarea {
-            width: 100%;
-            padding: 16px 20px;
-            border: 2px solid #d8cdc0;
-            border-radius: 18px;
-            resize: none;
-            font-size: 21px;
-            font-family: inherit;
-            outline: none;
-            min-height: 70px;
-            background: #fff;
-            transition: border 0.2s;
-        }
-        .input-area textarea:focus { border-color: #8a7a6a; }
-        .btn-row { display: flex; gap: 14px; margin-top: 12px; }
-        .mic-btn {
-            width: 72px; height: 72px;
+        /* 柔和光斑装饰 */
+        .glow {
+            position: fixed;
             border-radius: 50%;
-            background: #8a7a6a;
-            color: #fff;
-            border: none;
-            font-size: 32px;
-            cursor: pointer;
-            flex-shrink: 0;
+            filter: blur(90px);
+            opacity: 0.55;
+            pointer-events: none;
+            animation: drift 16s ease-in-out infinite alternate;
+        }
+        .glow.g1 { width: 430px; height: 430px; background: #f5d9b0; top: -130px; left: -110px; }
+        .glow.g2 { width: 390px; height: 390px; background: #d9c6e8; bottom: -150px; right: -90px; animation-delay: -8s; }
+        @keyframes drift {
+            from { transform: translate(0, 0) scale(1); }
+            to   { transform: translate(46px, 34px) scale(1.08); }
+        }
+
+        .hero {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            animation: rise 1s ease both;
+        }
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(26px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 中央徽标 */
+        .emblem {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(6px);
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.2s;
-            touch-action: manipulation;
-            user-select: none;
+            font-size: 54px;
+            box-shadow: 0 12px 32px rgba(122, 94, 58, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+            animation: float 5.5s ease-in-out infinite;
+            margin-bottom: 30px;
         }
-        .mic-btn:hover { background: #6d5f52; }
-        .mic-btn.listening { background: #c0392b; animation: pulse 1.2s infinite; }
-        @keyframes pulse {
-            0%   { box-shadow: 0 0 0 0 rgba(192,57,43,0.5); }
-            70%  { box-shadow: 0 0 0 20px rgba(192,57,43,0); }
-            100% { box-shadow: 0 0 0 0 rgba(192,57,43,0); }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(-10px); }
         }
-        #sendBtn {
-            flex: 1;
-            height: 72px;
-            background: #8a7a6a;
-            color: #fff;
-            border: none;
-            border-radius: 36px;
-            font-size: 24px;
-            letter-spacing: 6px;
-            cursor: pointer;
-            transition: background 0.2s;
-            touch-action: manipulation;
-            user-select: none;
-        }
-        #sendBtn:hover { background: #6d5f52; }
-        #sendBtn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .status {
-            font-size: 18px;
-            color: #8a7a68;
-            margin-top: 14px;
+        h1 {
+            font-family: "Noto Serif SC", "Songti SC", "STSong", serif;
+            font-size: clamp(46px, 9vw, 76px);
+            font-weight: 700;
+            letter-spacing: 10px;
+            color: #43332a;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 0 rgba(255, 255, 255, 0.6);
+        }
+        .tagline {
+            font-family: "Noto Serif SC", "Songti SC", serif;
+            font-size: clamp(17px, 3.4vw, 23px);
+            color: #8a7660;
+            letter-spacing: 4px;
+            margin-bottom: 58px;
+        }
+
+        /* 中间的回忆录大按钮 */
+        .btn-memoir {
+            display: inline-block;
+            text-decoration: none;
+            font-size: 26px;
+            letter-spacing: 8px;
+            color: #fff;
+            background: linear-gradient(135deg, #9a8876 0%, #7c6a58 100%);
+            padding: 24px 78px;
+            border-radius: 999px;
+            box-shadow: 0 16px 40px rgba(122, 94, 58, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            animation: rise 1s 0.25s ease both;
+        }
+        .btn-memoir:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 22px 52px rgba(122, 94, 58, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+        }
+        .btn-memoir:active { transform: translateY(0); }
+
+        /* 功能标签 */
+        .features {
+            margin-top: 66px;
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .feature {
+            font-size: 17px;
+            color: #6d5a46;
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            padding: 14px 28px;
+            border-radius: 999px;
+            letter-spacing: 2px;
+            box-shadow: 0 6px 18px rgba(122, 94, 58, 0.10);
+            animation: rise 1s 0.4s ease both;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 24px;
+            left: 0;
+            right: 0;
             text-align: center;
-            line-height: 1.5;
+            font-size: 14px;
+            color: #a08c74;
+            letter-spacing: 1px;
+            z-index: 1;
         }
-
-        /* ===== 回忆录按钮与展示 ===== */
-        .btn-generate {
-            width: 100%;
-            padding: 18px;
-            background: #f0ebe6;
-            border: 2px solid #d8cdc0;
-            border-radius: 18px;
-            color: #5a4a3a;
-            font-size: 21px;
-            cursor: pointer;
-            margin-top: 14px;
-            transition: background 0.2s;
-            touch-action: manipulation;
-            user-select: none;
-        }
-        .btn-generate:hover { background: #e8e0d8; }
-        .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
-        .memory-book {
-            width: 100%;
-            margin-top: 16px;
-            padding: 20px;
-            background: #fcf8f0;
-            border: 2px solid #d8cdc0;
-            border-radius: 16px;
-            display: none;
-            font-size: 20px;
-            line-height: 1.8;
-            color: #3d342e;
-            font-family: inherit;
-            resize: vertical;
-            min-height: 340px;
-            outline: none;
-        }
-        .memory-book.visible { display: block; }
-        .btn-download {
-            width: 100%;
-            padding: 18px;
-            background: #7aa05c;
-            border: none;
-            border-radius: 18px;
-            color: #fff;
-            font-size: 21px;
-            cursor: pointer;
-            margin-top: 12px;
-            transition: background 0.2s;
-            touch-action: manipulation;
-            user-select: none;
-        }
-        .btn-download:hover { background: #64884c; }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>📖 回忆录访谈员</h1>
-    <div class="subtitle">🎙️ 慢慢讲，我在认真听</div>
+    <div class="glow g1"></div>
+    <div class="glow g2"></div>
 
-    <div class="toggles">
-        <div class="toggle-item">
-            <span class="toggle-label" onclick="document.getElementById('voiceInputToggle').click()">🎤 语音输入</span>
-            <label class="switch">
-                <input type="checkbox" id="voiceInputToggle" checked>
-                <span class="slider"></span>
-            </label>
-            <span class="switch-state" id="voiceInputState">开</span>
+    <main class="hero">
+        <div class="emblem">📖</div>
+        <h1>回忆录访谈员</h1>
+        <p class="tagline">把一生的故事，慢慢讲给后人听</p>
+        <a class="btn-memoir" href="memoir.html">📜 开启回忆录</a>
+        <div class="features">
+            <span class="feature">🎤 开口即聊</span>
+            <span class="feature">🔊 温柔朗读</span>
+            <span class="feature">🎙️ 方言陪伴</span>
         </div>
-        <div class="toggle-item">
-            <span class="toggle-label" onclick="document.getElementById('voiceOutputToggle').click()">🔊 语音输出</span>
-            <label class="switch">
-                <input type="checkbox" id="voiceOutputToggle" checked>
-                <span class="slider"></span>
-            </label>
-            <span class="switch-state" id="voiceOutputState">开</span>
-        </div>
-        <div class="toggle-item">
-            <span class="toggle-label">🎙️ 方言</span>
-            <select id="dialectSelect" class="dialect-select">
-                <option value="zh-CN" selected>普通话</option>
-                <option value="yue-Hant-HK">粤语（广东话）</option>
-                <option value="zh-TW">台湾国语</option>
-            </select>
-        </div>
-    </div>
+    </main>
 
-    <div class="chat-box" id="chatBox">
-        <div class="message ai">您好呀，我是您的回忆录访谈员。可以跟我聊聊您小时候住的地方吗？</div>
-    </div>
-
-    <div class="input-area">
-        <textarea id="userInput" rows="2" placeholder="在这里打字，或点 🎤 直接说话…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
-        <div class="btn-row">
-            <button class="mic-btn" id="micBtn" title="点一下开始说话，说完了再点一下发送">🎤</button>
-            <button id="sendBtn" onclick="sendMessage()">发 送</button>
-        </div>
-    </div>
-    <div class="status" id="status">💡 点 🎤 开始说话，说完了再点一下 🎤 就会自动发送</div>
-
-    <button class="btn-generate" id="generateBtn" onclick="generateMemoir()">📝 生成回忆录</button>
-    <textarea class="memory-book" id="memoryBook" placeholder="点击上面的按钮，让 AI 把您的故事整理成回忆录…"></textarea>
-    <button class="btn-download" id="downloadBtn" onclick="downloadMemoir()" style="display:none">💾 下载回忆录（保存为 txt 文件）</button>
-</div>
-
-<script src="config.js"></script>
-<script>
-// ===== 配置区 =====
-// API Key 放在同目录下的 config.js 中（该文件已被 .gitignore 忽略，不会上传到公开仓库）
-// 请参考 config.example.js 创建自己的 config.js
-const DEEPSEEK_API_KEY = window.DEEPSEEK_API_KEY || 'YOUR_API_KEY_HERE';
-const API_URL = 'https://api.deepseek.com/v1/chat/completions';
-
-// ===== 状态 =====
-let conversation = [
-    { role: 'system', content: `你是一位耐心、温和、充满人文关怀的"回忆录访谈员"。你的使命是引导用户讲述人生故事。
-核心原则：
-1. 访谈优先：你的首要任务是提问和倾听，每次回复聚焦一个开放式问题。
-2. 共情鼓励：对用户的分享表达真诚的兴趣和共情。
-3. 一次一问：避免一次性抛出多个问题。
-4. 顺藤摸瓜：当用户提到有趣细节时，停下来追问。
-5. 口语化：回复要亲切、口语化、简短（一般不超过三句话），适合朗读给老人听。
-6. 以"记忆备份"和"陪伴倾听"为核心。
-开场白示例："您好呀，我是您的回忆录访谈员。可以跟我聊聊您小时候住的地方吗？"` },
-    { role: 'assistant', content: '您好呀，我是您的回忆录访谈员。可以跟我聊聊您小时候住的地方吗？' }
-];
-
-// ===== DOM引用 =====
-const chatBox = document.getElementById('chatBox');
-const userInput = document.getElementById('userInput');
-const sendBtn = document.getElementById('sendBtn');
-const statusEl = document.getElementById('status');
-const memoryBook = document.getElementById('memoryBook');
-const generateBtn = document.getElementById('generateBtn');
-const downloadBtn = document.getElementById('downloadBtn');
-const micBtn = document.getElementById('micBtn');
-const voiceInputToggle = document.getElementById('voiceInputToggle');
-const voiceOutputToggle = document.getElementById('voiceOutputToggle');
-const voiceInputState = document.getElementById('voiceInputState');
-const voiceOutputState = document.getElementById('voiceOutputState');
-const dialectSelect = document.getElementById('dialectSelect');
-
-// ===== 渲染消息 =====
-function renderMessages() {
-    const msgs = conversation.filter(m => m.role !== 'system');
-    chatBox.innerHTML = msgs.map(m =>
-        `<div class="message ${m.role === 'assistant' ? 'ai' : 'user'}">${m.content}</div>`
-    ).join('');
-    chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-// ===== 语音输出（朗读） =====
-const speechSupported = 'speechSynthesis' in window;
-let currentLang = 'zh-CN';   // 当前方言（语音识别与朗读共用）
-let zhVoice = null;
-let allVoices = [];
-
-function normalizeLang(lang) {
-    return (lang || '').toLowerCase().replace(/_/g, '-');
-}
-
-// 根据当前方言，优先找发音最匹配的中文语音
-function pickVoice() {
-    if (!speechSupported) return null;
-    const prefs = {
-        'zh-CN': ['zh-cn', 'cmn-hans-cn'],
-        'yue-Hant-HK': ['zh-hk', 'yue-hant-hk', 'yue'],
-        'zh-TW': ['zh-tw', 'cmn-hant-tw']
-    }[currentLang] || [];
-    for (const p of prefs) {
-        const v = allVoices.find(v => normalizeLang(v.lang).startsWith(p));
-        if (v) return v;
-    }
-    return allVoices.find(v => normalizeLang(v.lang).startsWith('zh')) || null;
-}
-
-function loadVoices() {
-    if (!speechSupported) return;
-    allVoices = speechSynthesis.getVoices();
-    zhVoice = pickVoice();
-}
-if (speechSupported) {
-    speechSynthesis.onvoiceschanged = loadVoices;
-    loadVoices();
-}
-
-function speakText(text) {
-    if (!speechSupported || !voiceOutputToggle.checked || !text) return;
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    if (zhVoice) u.voice = zhVoice;
-    u.lang = currentLang;   // 与所选方言一致
-    u.rate = 0.95;   // 语速稍慢，老人听得清
-    u.pitch = 1;
-    speechSynthesis.speak(u);
-}
-
-// 部分浏览器要求用户操作后才能朗读：第一次点按页面时"解锁"并念开场白
-let ttsUnlocked = false;
-function unlockTTS() {
-    if (ttsUnlocked || !speechSupported) return;
-    ttsUnlocked = true;
-    const silent = new SpeechSynthesisUtterance(' ');
-    silent.volume = 0;
-    speechSynthesis.speak(silent);
-    if (voiceOutputToggle.checked) {
-        setTimeout(() => speakText(conversation[1].content), 300);
-    }
-}
-document.addEventListener('pointerdown', unlockTTS, { once: true });
-document.addEventListener('keydown', unlockTTS, { once: true });
-
-// ===== 语音输入（识别） =====
-const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-const recognitionSupported = !!SR;
-let recognition = null;
-let listening = false;
-let stopRequested = false;
-let finalTranscript = '';
-let baseText = '';
-
-function initRecognition() {
-    if (!recognitionSupported || recognition) return;
-    recognition = new SR();
-    recognition.lang = currentLang;
-    recognition.continuous = true;       // 持续听，说完再点一下才结束
-    recognition.interimResults = true;   // 边说边显示
-
-    recognition.onresult = (event) => {
-        let interim = '';
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-            const r = event.results[i];
-            if (r.isFinal) finalTranscript += r[0].transcript;
-            else interim += r[0].transcript;
-        }
-        userInput.value = baseText + (baseText ? ' ' : '') + finalTranscript + interim;
-    };
-
-    recognition.onerror = (event) => {
-        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-            listening = false;
-            updateMicUI();
-            statusEl.textContent = '⚠️ 请允许浏览器使用麦克风，然后重试';
-            return;
-        }
-        if (event.error === 'language-not-supported') {
-            listening = false;
-            updateMicUI();
-            statusEl.textContent = '⚠️ 此浏览器不支持这种方言的识别，请换回普通话试试';
-            return;
-        }
-        // 其他小故障：如果还在听，稍后自动重试
-        if (listening) {
-            setTimeout(() => {
-                if (listening) safeStart();
-            }, 500);
-        }
-    };
-
-    recognition.onend = () => {
-        if (stopRequested) {
-            stopRequested = false;
-            finishListening();
-        } else if (listening) {
-            // 引擎因停顿自动结束：自动重新开始，继续听
-            setTimeout(() => {
-                if (listening) safeStart();
-            }, 300);
-        }
-    };
-}
-
-function updateMicUI() {
-    micBtn.classList.toggle('listening', listening);
-    micBtn.textContent = listening ? '🔴' : '🎤';
-}
-
-function safeStart() {
-    try {
-        recognition.lang = currentLang;
-        recognition.start();
-    } catch (e) {}
-}
-
-function startListening() {
-    if (!recognitionSupported || !voiceInputToggle.checked || listening) return;
-    initRecognition();
-    speechSynthesis.cancel();              // 停止朗读，安静听老人说话
-    baseText = userInput.value.trim();
-    finalTranscript = '';
-    listening = true;
-    stopRequested = false;
-    updateMicUI();
-    statusEl.textContent = '🎤 正在听您说话… 说完了请再点一下红色按钮';
-    safeStart();
-}
-
-function stopListeningAndSend() {
-    if (!listening) return;
-    stopRequested = true;
-    try { recognition.stop(); } catch (e) {}
-    // 兜底：个别浏览器 stop 后不触发 onend
-    setTimeout(() => {
-        if (listening) {
-            stopRequested = false;
-            finishListening();
-        }
-    }, 1500);
-}
-
-function finishListening() {
-    listening = false;
-    updateMicUI();
-    const text = userInput.value.trim();
-    if (text) {
-        statusEl.textContent = '💬 正在发送…';
-        sendMessage();
-    } else {
-        statusEl.textContent = '💡 没有听到内容，请再点一下 🎤 试试';
-    }
-}
-
-micBtn.addEventListener('click', () => {
-    if (listening) stopListeningAndSend();
-    else startListening();
-});
-
-// ===== 语音开关 =====
-voiceInputToggle.addEventListener('change', () => {
-    voiceInputState.textContent = voiceInputToggle.checked ? '开' : '关';
-    micBtn.style.display = (voiceInputToggle.checked && recognitionSupported) ? 'flex' : 'none';
-    if (!voiceInputToggle.checked && listening) {
-        stopRequested = true;
-        try { recognition.stop(); } catch (e) {}
-        listening = false;
-        updateMicUI();
-        userInput.value = userInput.value.trim();
-    }
-});
-voiceOutputToggle.addEventListener('change', () => {
-    voiceOutputState.textContent = voiceOutputToggle.checked ? '开' : '关';
-    if (!voiceOutputToggle.checked && speechSupported) speechSynthesis.cancel();
-});
-
-// ===== 方言切换 =====
-dialectSelect.addEventListener('change', () => {
-    currentLang = dialectSelect.value;
-    zhVoice = pickVoice();   // 朗读声音也跟着换
-    if (!listening) {
-        statusEl.textContent = '🎙️ 已切换到：' + dialectSelect.options[dialectSelect.selectedIndex].text;
-    }
-    if (listening) {
-        // 正在听时切换方言：中断后自动按新方言重新开始听
-        try { recognition.abort(); } catch (e) {}
-    }
-});
-
-// ===== 发送消息 =====
-async function sendMessage() {
-    const text = userInput.value.trim();
-    if (!text || sendBtn.disabled) return;
-
-    if (speechSupported) speechSynthesis.cancel();   // 停止正在说的话
-    conversation.push({ role: 'user', content: text });
-    userInput.value = '';
-    if (listening) { baseText = ''; finalTranscript = ''; }   // 防止旧文字重新出现
-    renderMessages();
-    sendBtn.disabled = true;
-    statusEl.textContent = '🤔 正在思考…';
-
-    try {
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
-            },
-            body: JSON.stringify({
-                model: 'deepseek-v4-pro',
-                messages: conversation,
-                stream: false,
-                max_tokens: 1024,
-                temperature: 0.8
-            })
-        });
-
-        if (!response.ok) {
-            const err = await response.json();
-            throw new Error(err.error?.message || 'API请求失败');
-        }
-
-        const data = await response.json();
-        const reply = data.choices[0].message.content;
-        conversation.push({ role: 'assistant', content: reply });
-        renderMessages();
-        statusEl.textContent = '💬 继续讲，我在听…';
-        speakText(reply);   // 每次都朗读
-
-    } catch (error) {
-        statusEl.textContent = '❌ ' + error.message;
-        conversation.pop();
-        renderMessages();
-    } finally {
-        sendBtn.disabled = false;
-        userInput.focus();
-    }
-}
-
-// ===== 生成回忆录（DeepSeek v4 pro 整理版） =====
-const MEMOIR_SYSTEM_PROMPT = `你是一位耐心的回忆录整理者，帮助老人把口述的人生故事整理成留给后人的回忆录。
-请仔细阅读下面的访谈对话素材，以老人讲述的内容为唯一依据，撰写一部完整的回忆录。
-
-写作要求：
-1. 以第三人称叙述，把受访者称为"老人"或"他/她"，像一位长辈把一生的故事讲给子孙后代听。
-2. 语气朴实、亲切、温暖，像家常话娓娓道来；不要模仿史书或历史传记的腔调，不要过度渲染。
-3. 严格依据素材：只写老人在访谈中真实讲到的内容，尽量保留原话里的细节和意思，不添油加醋、不虚构情节、不做文学化夸张。
-4. 结构依次为（以下四个标记必须原样输出）：
-   ① 标题：拟一个简单朴实的标题（单独一行）。
-   ② 【开篇概要】：一段话，简要概括老人的人生经历。
-   ③ 【目录】：按时间顺序列出各章标题，每行一章，格式如"第一章 童年岁月"。
-   ④ 【正文】：按时间线分章展开，每章以"第X章 章名"开头，再写若干段落。
-5. 完整性优先：正文要覆盖素材中提到的各个时期和主要经历，不要省略、不要草草收尾；篇幅以把事情讲完整为准，不设上限。
-6. 只输出纯文本，不要使用任何 Markdown 符号（不要#、*、-、>等标记），不要写页码。`;
-
-let generating = false;
-
-async function generateMemoir() {
-    if (generating) return;
-    const msgs = conversation.filter(m => m.role !== 'system');
-    if (msgs.length <= 1) {
-        statusEl.textContent = '💡 再多聊一会儿吧，回忆录需要更多故事素材';
-        return;
-    }
-
-    generating = true;
-    generateBtn.disabled = true;
-    statusEl.textContent = '📝 正在整理您的回忆录，请稍候…';
-
-    const memoirMessages = [
-        { role: 'system', content: MEMOIR_SYSTEM_PROMPT },
-        ...msgs,
-        { role: 'user', content: '请根据以上全部访谈对话素材，撰写完整的回忆录。' }
-    ];
-
-    try {
-        // 循环生成：若模型因长度限制截断（finish_reason=length），自动续写补全
-        let memoirText = '';
-        for (let round = 0; round < 5; round++) {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
-                },
-                body: JSON.stringify({
-                    model: 'deepseek-v4-pro',
-                    messages: memoirMessages,
-                    stream: false,
-                    max_tokens: 8192,
-                    temperature: 0.7
-                })
-            });
-
-            if (!response.ok) {
-                const err = await response.json();
-                throw new Error(err.error?.message || 'API请求失败');
-            }
-
-            const data = await response.json();
-            const choice = data.choices[0];
-            const chunk = (choice.message.content || '').trim();
-            memoirText += chunk;
-            memoirMessages.push({ role: 'assistant', content: choice.message.content });
-
-            if (choice.finish_reason !== 'length') break;   // 已完整生成
-
-            // 被截断：接着上一段断掉的地方继续写
-            memoirMessages.push({
-                role: 'user',
-                content: '上文被截断了。请接着刚才断掉的地方继续往下写，把正文完整写完；不要重复已经写过的内容，也不要再输出标题和目录。'
-            });
-            statusEl.textContent = '📝 内容较长，正在继续补全…';
-        }
-
-        memoirText = memoirText.trim();
-
-        // 分页：开篇/目录/每章各自另起一页，每页底部标注页码
-        const paged = paginateMemoir(memoirText);
-
-        memoryBook.value = paged;
-        memoryBook.classList.add('visible');
-        downloadBtn.style.display = 'block';
-        statusEl.textContent = '📖 回忆录已生成！您可以直接修改下方文字，修改好后点"下载"保存';
-
-        // 自动朗读开篇概要
-        const m = memoirText.match(/【开篇概要】\s*([\s\S]*?)(?=【目录】|$)/);
-        if (m && m[1]) speakText(m[1].trim().slice(0, 300));
-
-    } catch (error) {
-        statusEl.textContent = '❌ ' + error.message;
-    } finally {
-        generating = false;
-        generateBtn.disabled = false;
-    }
-}
-
-// ===== 分页处理：每章另起一页，每页底部加页码 =====
-function paginateMemoir(text, charsPerPage = 500) {
-    const blocks = text.split(/\n+/).map(b => b.trim()).filter(Boolean);
-    const pages = [];
-    let page = [];
-    let len = 0;
-    let inToc = false;   // 目录里的"第X章"不是正文，不另起页
-
-    const flush = () => {
-        if (page.length) {
-            pages.push(page);
-            page = [];
-            len = 0;
-        }
-    };
-
-    for (const block of blocks) {
-        const isSection = /^【.+】/.test(block);
-        if (isSection) {
-            flush();
-            inToc = block.includes('目录');
-        }
-        const isChapter = !inToc && /^第[一二三四五六七八九十百0-9０-９]+章/.test(block);
-        if (isChapter) flush();
-
-        page.push(block);
-        len += block.length;
-        if (len >= charsPerPage) flush();
-    }
-    flush();
-
-    return pages.map((p, i) =>
-        p.join('\n\n') + '\n\n— 第 ' + (i + 1) + ' 页 —'
-    ).join('\n\n\n');
-}
-
-// ===== 下载回忆录为 txt 文件 =====
-function downloadMemoir() {
-    const text = memoryBook.value;
-    if (!text.trim()) return;
-    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = '回忆录.txt';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    statusEl.textContent = '💾 已开始下载，请到电脑的"下载"文件夹查看';
-}
-
-// ===== 初始化 =====
-renderMessages();
-userInput.focus();
-
-if (DEEPSEEK_API_KEY === 'YOUR_API_KEY_HERE') {
-    statusEl.textContent = '⚠️ 请先在代码中替换 DEEPSEEK_API_KEY';
-}
-if (!recognitionSupported) {
-    voiceInputToggle.checked = false;
-    voiceInputToggle.disabled = true;
-    voiceInputState.textContent = '不支持';
-    micBtn.style.display = 'none';
-    statusEl.textContent = '⚠️ 此浏览器不支持语音输入，请换用 Chrome 或 Edge 浏览器';
-}
-if (!speechSupported) {
-    voiceOutputToggle.checked = false;
-    voiceOutputToggle.disabled = true;
-    voiceOutputState.textContent = '不支持';
-}
-</script>
+    <footer>为长辈设计的 AI 陪伴访谈 · 免费开源</footer>
 </body>
 </html>
