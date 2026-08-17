@@ -27,4 +27,14 @@ rm -rf "$DEST"
 ditto "$SRC" "$DEST"
 
 echo "✅ 已同步到：$DEST"
+
+# 自检：确认关键配置已是最新
+HV_VERSION=$(grep -o '"modelVersion"[^,]*' "$DEST/hvigor/hvigor-config.json5" 2>/dev/null || echo '缺失')
+OHPM_VERSION=$(grep -o '"modelVersion"[^,]*' "$DEST/oh-package.json5" 2>/dev/null || echo '缺失')
+echo "自检：hvigor $HV_VERSION | ohpm $OHPM_VERSION"
+if [ -f "$DEST/hvigor/hvigor-config.json5" ] && grep -q '"modelVersion" *: *"6.0.0"' "$DEST/oh-package.json5"; then
+  echo "✅ 配置一致（6.0.0），可以打开 DevEco 了"
+else
+  echo "⚠️ 配置版本异常，请把上面两行信息发给开发者"
+fi
 echo "👉 回到 DevEco Studio → File → Open 打开上面这个文件夹（若已打开，点右上角 Sync 即可）"
