@@ -23,11 +23,24 @@
    - 若提示安装 hvigor/ohpm 组件，全部同意
 5. 首次启动较慢，耐心等待"欢迎界面"出现
 
-## 二、打开工程
+## 二、打开工程（重要：路径不能有空格）
 
-1. DevEco Studio → **Open** → 选择本仓库的 `harmony/MemoirInterviewer` 文件夹
-2. 等待右下角 **Sync**（同步）完成（首次要下载依赖，可能 5-15 分钟）
-3. 预期情况与处理：
+DevEco/hvigor 不支持含空格的路径，本项目源码位于含空格的目录下，因此请使用**同步脚本**把工程复制到无空格路径再打开：
+
+1. 打开"终端"（Terminal），粘贴执行（注意首尾引号）：
+
+```bash
+bash "/Users/hasu/Downloads/project driven by deepseek herness/scripts/deveco-sync.sh"
+```
+
+2. 脚本会把工程同步到 `~/DevEcoProjects/MemoirInterviewer`
+3. DevEco Studio → **Open** → 选择 `~/DevEcoProjects/MemoirInterviewer`（即 /Users/hasu/DevEcoProjects/MemoirInterviewer）
+4. 等待右下角 **Sync**（同步）完成（首次要下载依赖，可能 5-15 分钟）
+5. **以后每次我修复代码后**：重新运行同步脚本 → DevEco 点 Sync
+
+> 注意：`~/DevEcoProjects/MemoirInterviewer` 是自动生成的副本，**不要在其中手动改代码**；所有代码修改都在 GitHub 仓库进行。
+
+Sync 时预期情况与处理：
 
 | 情况 | 处理 |
 |------|------|
