@@ -134,6 +134,22 @@ async function main() {
     && bridge.chatCalls[0].messages.some(m => m.content.includes('我小时候住在乡下')));
   ok('语音：收音状态已结束', w.document.getElementById('micBtn').textContent.includes('🎤'));
 
+  // ===== 6. 语音开关行为 =====
+  w.document.getElementById('voiceInputToggle').click();
+  ok('开关：语音输入关闭后麦克风隐藏', w.document.getElementById('micBtn').style.display === 'none');
+  w.document.getElementById('voiceInputToggle').click();
+  ok('开关：语音输入重新开启后麦克风显示', w.document.getElementById('micBtn').style.display !== 'none');
+
+  w.document.getElementById('voiceOutputToggle').click();
+  const speakCountBefore = bridge.speakTexts.length;
+  bridge.chatImpl = [() => ({ choices: [{ message: { content: '静默测试' }, finish_reason: 'stop' }] })];
+  w.document.getElementById('userInput').value = '测试';
+  await w.sendMessage();
+  await new Promise(r => setTimeout(r, 60));
+  ok('开关：语音输出关闭后不再朗读', bridge.speakTexts.length === speakCountBefore);
+  w.document.getElementById('voiceOutputToggle').click();
+  ok('开关：语音输出重新开启', w.document.getElementById('voiceOutputState').textContent === '开');
+
   console.log(failures === 0 ? '\n🎉 全部测试通过' : `\n❌ ${failures} 项失败`);
   process.exit(failures ? 1 : 0);
 }
