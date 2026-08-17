@@ -54,7 +54,7 @@ Sync 时预期情况与处理：
 2. 左侧 **Local Emulator** → 新建 → 选择 **Phone**（如 Mate 60 Pro 模拟器）
 3. 按提示下载模拟器镜像（几个 GB），创建后启动
 4. 回到编辑器点顶部 **▶ Run**（或 Ctrl+R / ⌘R）
-5. 若提示签名：**File → Project Structure → Signing Configs → 勾选 Automatically generate signature**（登录华为账号自动完成）
+5. ⚠️ **签名不会自动弹窗，必须手动配置**：**File → Project Structure（⌘;）→ Signing Configs → 勾选 "Automatically generate signature"** → 未登录则点 Sign In 登录华为账号 → 出现证书信息后 Apply → OK。若提示需要 AGC 项目/应用或包名报错，截图发给开发者。
 6. 应用启动后应看到**原生欢迎页**
 
 ## 四、联调测试清单（逐项打勾）
