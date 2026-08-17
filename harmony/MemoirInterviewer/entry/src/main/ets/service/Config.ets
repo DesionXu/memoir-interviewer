@@ -1,10 +1,13 @@
 /**
  * 应用配置
- * API Key 优先从"设置"页填写（保存在本机 preferences），未设置时使用此默认值。
+ * BUILTIN_API_KEY：开发者内置 Key（开箱即聊）。仓库里为占位符，
+ * 由 scripts/deveco-sync.sh 与 scripts/harmony-build.sh 在构建/同步时
+ * 自动用仓库根目录 config.js 中的真实 Key 注入，绝不提交到公开仓库。
+ * 用户在设置页填写的自定义 Key 优先生效。
  */
 export class AppConfig {
   // DeepSeek 配置
-  static readonly DEFAULT_API_KEY: string = 'YOUR_API_KEY_HERE';
+  static readonly BUILTIN_API_KEY: string = 'YOUR_API_KEY_HERE';
   static readonly API_URL: string = 'https://api.deepseek.com/v1/chat/completions';
   static readonly MODEL: string = 'deepseek-v4-pro';
 

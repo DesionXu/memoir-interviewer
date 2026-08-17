@@ -17,9 +17,13 @@ export interface ChatMessage {
  * API Key 从本机设置读取，网页端无法接触到。
  */
 export async function callChatApi(messages: ChatMessage[], maxTokens: number, temperature: number): Promise<string> {
-  const apiKey = await SettingsService.getApiKey();
-  if (!apiKey || apiKey === AppConfig.DEFAULT_API_KEY || apiKey === '') {
-    throw new Error('请先在"设置"页填写 DeepSeek API Key');
+  // Key 优先级：设置页自定义 Key > 内置开发者 Key
+  let apiKey = await SettingsService.getApiKey();
+  if (!apiKey) {
+    apiKey = AppConfig.BUILTIN_API_KEY;
+  }
+  if (!apiKey || apiKey === 'YOUR_API_KEY_HERE' || apiKey === '') {
+    throw new Error('未配置 API Key');
   }
 
   const request = http.createHttp();

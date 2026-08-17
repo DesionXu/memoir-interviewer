@@ -51,7 +51,12 @@ MemoirInterviewer/
 
 ## 配置说明
 
-- API Key：应用首次使用前，在原生"设置"页（欢迎页右上角 ⚙️）填写并保存，仅存本机
+- **内置 API Key（开箱即聊）**：仓库里 `Config.ets` 只存占位符 `YOUR_API_KEY_HERE`；
+  真实 Key 在仓库根目录 `config.js` 中，由 `scripts/deveco-sync.sh` / `scripts/harmony-build.sh`
+  在同步/构建时自动注入，**不会进入公开仓库**。用户打开应用即可直接聊天。
+- **自定义 Key（可选）**：设置页可填写自定义 Key，优先生效，仅存本机
 - `ets/service/Config.ets`：语音在线/离线开关；在线语音需 AGC 开通后可用
 - 网页端与原生层通过 `window.HarmonyBridge` 通信，协议见 `ets/bridge/HarmonyBridge.ets`
 - 页面结构：`pages/Index`（原生欢迎页）→ `pages/Interview`（Web 访谈页）→ `pages/Settings`（设置页）
+
+> ⚠️ 内置 Key 会随安装包分发，技术上可被逆向提取。公开发布前请在 DeepSeek 控制台设置消费上限/告警，并规划收费与防滥用方案。

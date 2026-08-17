@@ -1,22 +1,20 @@
 import { SettingsService } from '../service/SettingsService';
 
-const PLACEHOLDER_KEY: string = 'YOUR_API_KEY_HERE';
-
 /**
- * 设置页：管理 DeepSeek API Key（仅存本机）+ 精简隐私说明 + 关于信息。
+ * 设置页：可选自定义 API Key（留空使用内置 Key）+ 精简隐私说明 + 关于信息。
  */
 @Entry
 @Component
 struct Settings {
   @State apiKeyInput: string = '';
-  @State savedMask: string = '未设置';
+  @State savedMask: string = '未设置（使用内置 Key）';
 
   aboutToAppear(): void {
     const context = this.getUIContext().getHostContext();
     if (context) {
       SettingsService.init(context);
       SettingsService.getApiKey().then((key: string) => {
-        if (key && key !== PLACEHOLDER_KEY) {
+        if (key) {
           this.savedMask = '已设置（' + key.slice(0, 6) + '…）';
         }
       });
@@ -49,14 +47,14 @@ struct Settings {
 
       Scroll() {
         Column() {
-          Text('DeepSeek API Key')
+          Text('自定义 API Key（可选）')
             .fontSize(20)
             .fontWeight(FontWeight.Medium)
             .fontColor('#4A3A2C')
             .width('90%')
             .textAlign(TextAlign.Start)
 
-          Text('用于 AI 访谈对话与回忆录生成，仅保存在本机，不会上传。')
+          Text('留空即可直接使用应用内置 Key 聊天；填写后优先生效，仅保存在本机。')
             .fontSize(15)
             .fontColor('#8A7660')
             .width('90%')

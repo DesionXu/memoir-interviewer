@@ -26,6 +26,16 @@ mkdir -p "$(dirname "$DEST")"
 rm -rf "$DEST"
 ditto "$SRC" "$DEST"
 
+# 注入开发者 API Key（来自仓库根目录 config.js，不进入公开仓库）
+CONFIG_JS="$(cd "$SRC/../.." && pwd)/config.js"
+if [ -f "$CONFIG_JS" ]; then
+  KEY=$(grep -oE 'sk-[a-zA-Z0-9]{10,}' "$CONFIG_JS" | head -1)
+  if [ -n "$KEY" ]; then
+    sed -i '' "s|'YOUR_API_KEY_HERE'|'$KEY'|" "$DEST/entry/src/main/ets/service/Config.ets"
+    echo "✅ 已注入内置 API Key（${KEY:0:6}…）"
+  fi
+fi
+
 echo "✅ 已同步到：$DEST"
 
 # 自检：确认关键配置已是最新

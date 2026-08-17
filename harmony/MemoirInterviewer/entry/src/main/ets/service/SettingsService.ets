@@ -2,7 +2,6 @@ import { preferences } from '@kit.ArkData';
 import { common } from '@kit.AbilityKit';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
-import { AppConfig } from './Config';
 
 const DOMAIN: number = 0x0000;
 const STORE_NAME: string = 'memoir_settings';
@@ -28,13 +27,13 @@ export class SettingsService {
 
   static async getApiKey(): Promise<string> {
     if (!SettingsService.store) {
-      return AppConfig.DEFAULT_API_KEY;
+      return '';
     }
     try {
-      const value = await SettingsService.store.get(KEY_API_KEY, AppConfig.DEFAULT_API_KEY);
+      const value = await SettingsService.store.get(KEY_API_KEY, '');
       return value as string;
     } catch (err) {
-      return AppConfig.DEFAULT_API_KEY;
+      return '';
     }
   }
 
