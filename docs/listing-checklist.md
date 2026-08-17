@@ -9,7 +9,7 @@
 - [ ] 计算机软件著作权（软著）登记
   - 办理渠道：中国版权保护中心官网（https://register.ccopyright.com.cn/）自办，或代办机构
   - 周期：自办约 30-60 天（可加急）；代办一般 1-2 个月出证
-  - 材料：申请表、用户手册（本项目的 README/使用说明）、源程序（前后各 30 页、每页 50 行，共 60 页；本项目代码量足够，可直接取 index.html/memoir.html/server.js/ArkTS 源码排版）
+  - 材料已备好：源代码文档 `docs/soft-copyright-source-code.txt`（已按 50 行/页生成 43 页）、软件说明书 `docs/soft-copyright-manual.md`
   - ⚠️ 华为应用市场多数类目要求提供软著，建议现在就启动办理
 - [ ] App 备案（ICP 备案）
   - 2023 年起新上架 App 需完成备案；通过接入服务商（如华为云）或华为开发者平台指引办理
