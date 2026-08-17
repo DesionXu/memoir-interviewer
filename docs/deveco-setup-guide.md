@@ -80,6 +80,8 @@ Sync 时预期情况与处理：
 
 ## 六、首次运行与已知事项
 
+0. **自动签名（▶ Run 前必做）**：第一次点运行会提示缺少签名（日志出现 `The sign meta directory does not exist`）。
+   操作：**File → Project Structure（⌘;）→ Signing Configs → 勾选 "Automatically generate signature"** → 按提示登录华为账号 → Apply → OK。若弹窗要求选择 AGC 项目/应用，说明需要先在 AGC 创建应用（见 `docs/agc-setup-guide.md`），并把报错截图发给开发者定包名。
 1. **API Key**：首次进入访谈页发消息前，先到原生"设置"页（欢迎页右上角 ⚙️）填入 DeepSeek API Key 并保存（仅存本机）；未填时会提示"请先在设置页填写"
 2. **在线语音（识别/朗读）**：需先在 AGC 开通语音服务（见 `docs/agc-setup-guide.md`）。开通前：
    - 聊天、回忆录、下载等文字功能完全可用
