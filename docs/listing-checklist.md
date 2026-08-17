@@ -17,12 +17,12 @@
 
 ## 二、应用开发与配置
 
-- [ ] DevEco Studio 安装（Mac Apple Silicon 版）
-- [ ] 打开工程 harmony/MemoirInterviewer 并 Sync 通过
-- [ ] 填写 entry/src/main/ets/service/Config.ets 中的 API_KEY
+- [x] DevEco Studio 安装（Mac Apple Silicon 版，6.1.1）
+- [x] 工程编译验证：ArkTS 编译 + HAP 打包成功（HarmonyOS 6.1.1 / API 24，命令行与 IDE 均可构建）
+- [ ] 打开工程 harmony/MemoirInterviewer 并在模拟器/真机联调全部功能（联调清单见 docs/deveco-setup-guide.md）
+- [x] API Key 管理：原生设置页本机存储（无需改代码）
 - [ ] 包名确认：AGC 创建应用后，把 AppScope/app.json5 的 bundleName 改成与 AGC 一致的唯一包名（当前占位 com.memoir.interviewer）
 - [ ] 更换正式应用图标（当前为占位图，建议 1024×1024 设计稿）
-- [ ] 模拟器/真机联调：语音识别、朗读、聊天、回忆录全链路
 
 ## 三、AGC（AppGallery Connect）与签名
 

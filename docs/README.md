@@ -9,7 +9,8 @@
 | `soft-copyright-manual.md` | 软著软件说明书 | 待填开发完成日期 |
 | `soft-copyright-source-code.txt` | 软著源代码文档（43 页，已生成） | 已生成，可直接打印/导出 PDF |
 | `app-icp-filing.md` | App 备案办理指南 | 按指南办理 |
-| `deveco-setup-guide.md` | DevEco 安装 + 联调测试清单 | 联调时使用 |
+| `agc-setup-guide.md` | AGC 建应用、开通语音、签名、上架提交操作手册 | AGC 阶段使用 |
+| `deveco-setup-guide.md` | DevEco 安装 + 联调测试清单 + 已知事项 | 联调时使用 |
 
 ## 生成软著源代码文档
 

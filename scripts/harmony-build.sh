@@ -21,9 +21,14 @@ export DEVECO_SDK_HOME="$DEVECO/Contents/sdk"
 export JAVA_HOME="$DEVECO/Contents/jbr/Contents/Home"
 export PATH="$DEVECO/Contents/tools/node/bin:$DEVECO/Contents/tools/ohpm/bin:$JAVA_HOME/bin:$PATH"
 
+# hvigor 缓存放到临时目录，避免污染用户主目录（也规避部分权限问题）
+export HOME="${HVIGOR_HOME_DIR:-/tmp/hvigor-home}"
+export npm_config_cache="/tmp/hvigor-npm-cache"
+mkdir -p "$HOME" "$npm_config_cache"
+
 "$DEVECO/Contents/tools/node/bin/node" "$DEVECO/Contents/tools/hvigor/bin/hvigorw.js" \
   --mode module -p product=default -p buildMode="$MODE" assembleHap --no-daemon
 
 echo ""
-echo "✅ 构建完成（$MODE）。产物位于："
+echo "✅ 构建完成 [mode=$MODE]。产物位于："
 ls -lh "$PROJECT/entry/build/default/outputs/default/"*.hap 2>/dev/null || true
