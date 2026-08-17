@@ -41,7 +41,8 @@ export class AsrService {
         onResult: (result: speechRecognizer.SpeechRecognitionResult) => {
           this.handleResult(result);
         },
-        onEnd: () => {
+        onComplete: (sessionId: string) => {
+          hilog.info(DOMAIN, 'AsrService', 'onComplete: %{public}s', sessionId);
           this.onEnd();
         },
         onError: (error: speechRecognizer.SpeechError) => {
