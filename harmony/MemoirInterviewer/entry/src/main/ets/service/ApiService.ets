@@ -38,8 +38,8 @@ export async function callChatApi(messages: ChatMessage[], maxTokens: number, te
         temperature: temperature
       }),
       expectDataType: http.HttpDataType.STRING,
-      connectTimeout: 60000,
-      readTimeout: 180000
+      connectTimeout: 120000,   // 弱网/慢网环境给足时间（农村 2G/3G 也能用）
+      readTimeout: 360000
     });
     if (response.responseCode !== 200) {
       hilog.error(DOMAIN, 'ApiService', 'DeepSeek API error: %{public}d', response.responseCode);
