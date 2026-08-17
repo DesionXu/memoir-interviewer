@@ -529,6 +529,9 @@ const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 function hasNativeAsr() {
     return !!(window.HarmonyBridge && typeof window.HarmonyBridge.listenStart === 'function');
 }
+function hasNativeSpeak() {
+    return !!(window.HarmonyBridge && typeof window.HarmonyBridge.speak === 'function');
+}
 let harmonyAsr = hasNativeAsr();
 function asrAvailable() {
     return !!SR || harmonyAsr;
@@ -605,7 +608,7 @@ function safeStart() {
 
 function startListening() {
     if (!asrAvailable() || !voiceInputToggle.checked || listening) return;
-    speechSynthesis.cancel();              // 停止朗读，安静听老人说话
+    if (speechSupported) speechSynthesis.cancel();   // 停止朗读，安静听老人说话
     baseText = userInput.value.trim();
     finalTranscript = '';
     listening = true;
@@ -880,7 +883,7 @@ if (!recognitionSupported) {
     micBtn.style.display = 'none';
     statusEl.textContent = '⚠️ 此浏览器不支持语音输入，请换用 Chrome 或 Edge 浏览器';
 }
-// 鸿蒙原生桥接注入可能晚于页面脚本：延迟再探测一次并启用语音输入
+// 鸿蒙原生桥接注入可能晚于页面脚本：延迟再探测一次并启用语音输入/输出
 setTimeout(() => {
     if (!harmonyAsr && hasNativeAsr()) {
         harmonyAsr = true;
@@ -890,8 +893,13 @@ setTimeout(() => {
         micBtn.style.display = 'flex';
         statusEl.textContent = '💡 点 🎤 开始说话，说完了再点一下 🎤 就会自动发送';
     }
+    if (!speechSupported && hasNativeSpeak() && voiceOutputToggle.disabled) {
+        voiceOutputToggle.disabled = false;
+        voiceOutputToggle.checked = true;
+        voiceOutputState.textContent = '开';
+    }
 }, 2000);
-if (!speechSupported) {
+if (!speechSupported && !hasNativeSpeak()) {
     voiceOutputToggle.checked = false;
     voiceOutputToggle.disabled = true;
     voiceOutputState.textContent = '不支持';
