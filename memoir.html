@@ -312,8 +312,14 @@ const API_URL = 'https://api.deepseek.com/v1/chat/completions';
 // 调用 DeepSeek：鸿蒙原生桥接 > 同源代理 /api/chat > 浏览器直连
 async function callDeepSeek(messages, maxTokens, temperature) {
     // 0) 鸿蒙原生桥接（运行在鸿蒙应用内时，由原生层发起请求并保管 Key）
+    // 原生层是异步的：通过回调 ID + window.__bridgeResolve/Reject 返回结果
     if (window.HarmonyBridge && typeof window.HarmonyBridge.chat === 'function') {
-        return window.HarmonyBridge.chat(messages, maxTokens, temperature);
+        return new Promise((resolve, reject) => {
+            const cbId = 'cb_' + Date.now() + '_' + Math.floor(Math.random() * 1000000);
+            window.__bridgeCbs = window.__bridgeCbs || {};
+            window.__bridgeCbs[cbId] = { resolve: resolve, reject: reject };
+            window.HarmonyBridge.chat(JSON.stringify(messages), maxTokens, temperature, cbId);
+        });
     }
     // 1) 尝试同源后端代理
     try {
@@ -364,6 +370,35 @@ async function callDeepSeek(messages, maxTokens, temperature) {
     }
     return directRes.json();
 }
+
+// ===== 鸿蒙原生桥接回调（原生层通过 runJavaScript 触发） =====
+window.__bridgeCbs = {};
+window.__bridgeResolve = function (id, rawJson) {
+    const c = window.__bridgeCbs[id];
+    if (c) { delete window.__bridgeCbs[id]; c.resolve(JSON.parse(rawJson)); }
+};
+window.__bridgeReject = function (id, msg) {
+    const c = window.__bridgeCbs[id];
+    if (c) { delete window.__bridgeCbs[id]; c.reject(new Error(msg)); }
+};
+// 原生语音识别结果：实时写入输入框（listening/baseText/finalTranscript 为全局变量）
+window.__bridgeOnAsr = function (finalText, interimText) {
+    if (!listening) return;
+    if (finalText) finalTranscript += finalText;
+    userInput.value = baseText + (baseText ? ' ' : '') + finalTranscript + (interimText || '');
+};
+window.__bridgeOnAsrError = function (msg) {
+    if (!listening) return;
+    listening = false;
+    updateMicUI();
+    statusEl.textContent = '⚠️ 语音识别出错：' + msg;
+};
+window.__bridgeOnAsrEnd = function () {
+    if (listening && stopRequested) {
+        stopRequested = false;
+        finishListening();
+    }
+};
 
 // ===== 状态 =====
 let conversation = [
@@ -472,7 +507,8 @@ document.addEventListener('keydown', unlockTTS, { once: true });
 
 // ===== 语音输入（识别） =====
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-const recognitionSupported = !!SR;
+const harmonyAsr = !!(window.HarmonyBridge && typeof window.HarmonyBridge.listenStart === 'function');
+const recognitionSupported = !!SR || harmonyAsr;
 let recognition = null;
 let listening = false;
 let stopRequested = false;
@@ -544,7 +580,6 @@ function safeStart() {
 
 function startListening() {
     if (!recognitionSupported || !voiceInputToggle.checked || listening) return;
-    initRecognition();
     speechSynthesis.cancel();              // 停止朗读，安静听老人说话
     baseText = userInput.value.trim();
     finalTranscript = '';
@@ -552,20 +587,36 @@ function startListening() {
     stopRequested = false;
     updateMicUI();
     statusEl.textContent = '🎤 正在听您说话… 说完了请再点一下红色按钮';
-    safeStart();
+    if (harmonyAsr) {
+        window.HarmonyBridge.listenStart();   // 鸿蒙原生语音识别
+    } else {
+        initRecognition();
+        safeStart();
+    }
 }
 
 function stopListeningAndSend() {
     if (!listening) return;
     stopRequested = true;
-    try { recognition.stop(); } catch (e) {}
-    // 兜底：个别浏览器 stop 后不触发 onend
-    setTimeout(() => {
-        if (listening) {
-            stopRequested = false;
-            finishListening();
-        }
-    }, 1500);
+    if (harmonyAsr) {
+        window.HarmonyBridge.listenStop();
+        // 原生端停止后会通过 __bridgeOnAsrEnd 立即收尾，这里兜底
+        setTimeout(() => {
+            if (listening) {
+                stopRequested = false;
+                finishListening();
+            }
+        }, 1200);
+    } else {
+        try { recognition.stop(); } catch (e) {}
+        // 兜底：个别浏览器 stop 后不触发 onend
+        setTimeout(() => {
+            if (listening) {
+                stopRequested = false;
+                finishListening();
+            }
+        }, 1500);
+    }
 }
 
 function finishListening() {

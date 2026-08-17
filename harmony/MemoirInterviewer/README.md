@@ -37,7 +37,13 @@ MemoirInterviewer/
 
 ## 待办（按步骤）
 
-- [ ] v0.2 原生桥接：chat / speak / listen
-- [ ] v0.3 权限弹窗与设置页
-- [ ] v0.4 联调测试
-- [ ] v0.5 签名打包上架
+- [x] v0.1 工程骨架 + Web 容器 + 打包网页
+- [x] v0.2 原生桥接：chat（API 代理）/ speak（原生朗读）/ listenStart·listenStop（原生语音识别）
+- [ ] v0.3 权限弹窗与原生设置页（Key 管理、隐私政策展示）
+- [ ] v0.4 联调测试（需 DevEco Studio + 真机/模拟器）
+- [ ] v0.5 签名打包上架（材料见仓库 docs/ 目录）
+
+## 配置说明
+
+- `ets/service/Config.ets`：填写 DeepSeek API Key；在线语音需 AGC 开通后可用
+- 网页端与原生层通过 `window.HarmonyBridge` 通信，协议见 `ets/bridge/HarmonyBridge.ets`
