@@ -86,6 +86,10 @@ Sync 时预期情况与处理：
    3. 必须点 **Apply**，再点 **OK**——只关窗口不 Apply 不会写入配置
    4. 成功标志：工程 `build-profile.json5` 的 `signingConfigs` 不再是 `[]`（出现 p12/cer/p7b 路径）
    5. 若提示需要 AGC 项目/应用或包名报错，截图发给开发者
+   6. **如果 Apply 后配置仍是空的**（已知本机曾出现：日志含 `Cannot run program "node"`、`登录失败，请重试`、`Failed to identify the router device`）：
+      - 先 **File → Invalidate Caches… → Invalidate and Restart** 重启 IDE
+      - 确认右上角头像已登录华为账号（未登录先登录）
+      - 再走一遍"取消勾选 → Apply → 勾选 → Apply → OK"
    > 注：证书密码由 IDE 存入系统钥匙串，无法手动填写；本地体验阶段也可跳过签名——
    > 模拟器允许安装未签名 HAP（本仓库 scripts/harmony-build.sh 产物即可，hdc install 实测通过），
    > 正式上架的 release 包才必须签名（届时在 AGC 建应用后自动签名会完整生效）。
