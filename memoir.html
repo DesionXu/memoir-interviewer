@@ -310,7 +310,25 @@ const DEEPSEEK_API_KEY = window.DEEPSEEK_API_KEY || 'YOUR_API_KEY_HERE';
 const API_URL = 'https://api.deepseek.com/v1/chat/completions';
 
 // 调用 DeepSeek：鸿蒙原生桥接 > 同源代理 /api/chat > 浏览器直连
+// 附带保护：v4-pro 是推理模型，token 预算全花在思考上时正文可能为空，自动加倍预算重试一次
 async function callDeepSeek(messages, maxTokens, temperature) {
+    let attemptTokens = maxTokens;
+    let attemptMessages = messages;
+    for (let attempt = 0; attempt < 2; attempt++) {
+        const data = await requestDeepSeek(attemptMessages, attemptTokens, temperature);
+        const choice = data && data.choices && data.choices[0];
+        const content = choice && choice.message ? (choice.message.content || '') : '';
+        const finishReason = choice ? choice.finish_reason : '';
+        if (content.trim() || finishReason !== 'length' || attempt === 1) {
+            return data;
+        }
+        // 正文为空且因长度截断：加倍预算重试一次
+        attemptTokens = Math.min(attemptTokens * 2, 8192);
+        attemptMessages = attemptMessages.concat([{ role: 'user', content: '请直接给出回答正文。' }]);
+    }
+}
+
+async function requestDeepSeek(messages, maxTokens, temperature) {
     // 0) 鸿蒙原生桥接（运行在鸿蒙应用内时，由原生层发起请求并保管 Key）
     // 原生层是异步的：通过回调 ID + window.__bridgeResolve/Reject 返回结果
     if (window.HarmonyBridge && typeof window.HarmonyBridge.chat === 'function') {
