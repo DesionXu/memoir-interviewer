@@ -11,6 +11,7 @@
 | `app-icp-filing.md` | App 备案办理指南 | 按指南办理 |
 | `agc-setup-guide.md` | AGC 建应用、开通语音、签名、上架提交操作手册 | AGC 阶段使用 |
 | `deveco-setup-guide.md` | DevEco 安装 + 联调测试清单 + 已知事项 | 联调时使用 |
+| `screenshots/` | 应用截图（欢迎页/访谈页/设置页，1320×2856，模拟器实测截图） | 市场提交参考 |
 
 ## 生成软著源代码文档
 
