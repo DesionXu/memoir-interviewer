@@ -1,4 +1,4 @@
-import { abilityAccessCtrl, common, Permissions } from '@kit.AbilityKit';
+import { abilityAccessCtrl, common } from '@kit.AbilityKit';
 import { BusinessError } from '@kit.BasicServicesKit';
 
 /**
@@ -8,7 +8,7 @@ import { BusinessError } from '@kit.BasicServicesKit';
 export async function ensureMicPermission(context: common.Context): Promise<boolean> {
   const atManager = abilityAccessCtrl.createAtManager();
   try {
-    const result = await atManager.requestPermissionsFromUser(context, [Permissions.MICROPHONE]);
+    const result = await atManager.requestPermissionsFromUser(context, ['ohos.permission.MICROPHONE']);
     return result.authResults.length > 0 && result.authResults[0] === 0;
   } catch (err) {
     const e = err as BusinessError;

@@ -1,5 +1,3 @@
-import { common } from '@kit.AbilityKit';
-import { promptAction, router } from '@kit.ArkUI';
 import { SettingsService } from '../service/SettingsService';
 
 const PLACEHOLDER_KEY: string = 'YOUR_API_KEY_HERE';
@@ -14,13 +12,15 @@ struct Settings {
   @State savedMask: string = '未设置';
 
   aboutToAppear(): void {
-    const context = getContext(this) as common.Context;
-    SettingsService.init(context);
-    SettingsService.getApiKey().then((key: string) => {
-      if (key && key !== PLACEHOLDER_KEY) {
-        this.savedMask = '已设置（' + key.slice(0, 6) + '…）';
-      }
-    });
+    const context = this.getUIContext().getHostContext();
+    if (context) {
+      SettingsService.init(context);
+      SettingsService.getApiKey().then((key: string) => {
+        if (key && key !== PLACEHOLDER_KEY) {
+          this.savedMask = '已设置（' + key.slice(0, 6) + '…）';
+        }
+      });
+    }
   }
 
   build() {
@@ -31,7 +31,7 @@ struct Settings {
           .fontColor('#8A7A6A')
           .padding(12)
           .onClick(() => {
-            router.back();
+            this.getUIContext().getRouter().back();
           })
         Blank()
         Text('设置')
@@ -89,13 +89,13 @@ struct Settings {
             .onClick(() => {
               const key = this.apiKeyInput.trim();
               if (!key) {
-                promptAction.showToast({ message: '请输入 API Key' });
+                this.getUIContext().getPromptAction().showToast({ message: '请输入 API Key' });
                 return;
               }
               SettingsService.setApiKey(key).then(() => {
                 this.savedMask = '已设置（' + key.slice(0, 6) + '…）';
                 this.apiKeyInput = '';
-                promptAction.showToast({ message: '已保存' });
+                this.getUIContext().getPromptAction().showToast({ message: '已保存' });
               });
             })
 

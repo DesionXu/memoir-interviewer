@@ -43,6 +43,12 @@ MemoirInterviewer/
 - [ ] v0.4 联调测试（需 DevEco Studio + 真机/模拟器）
 - [ ] v0.5 签名打包上架（材料见仓库 docs/ 目录）
 
+## 构建
+
+- 已在本机验证：**ArkTS 编译 + HAP 打包成功**（HarmonyOS 6.1.1 / API 24，hvigor 6.24.4，modelVersion 6.0.0）
+- 命令行构建：`bash "…/scripts/harmony-build.sh"`（见仓库 scripts/ 目录）
+- 或 DevEco Studio 打开工程直接 ▶ Run（IDE 自动处理签名）
+
 ## 配置说明
 
 - API Key：应用首次使用前，在原生"设置"页（欢迎页右上角 ⚙️）填写并保存，仅存本机

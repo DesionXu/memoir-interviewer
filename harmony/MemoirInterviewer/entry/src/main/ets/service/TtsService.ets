@@ -38,9 +38,7 @@ export class TtsService {
     }
     this.engine.stop();   // 打断上一句
     const params: textToSpeech.SpeakParams = {
-      audioType: 'pcm',
-      speed: '0.95',      // 语速稍慢，老人听得清
-      volume: '1.0'
+      requestId: 'tts_' + Date.now().toString()
     };
     this.engine.speak(text, params);
   }

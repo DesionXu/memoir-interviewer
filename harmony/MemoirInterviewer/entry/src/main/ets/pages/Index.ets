@@ -1,10 +1,7 @@
-import { router } from '@kit.ArkUI';
-
 /**
  * 原生欢迎页：与网页版欢迎页同款设计（暖色渐变 + 中央徽标 + 大按钮），
  * 提高原生度，降低"纯网页套壳"的审核风险。
- */
-@Entry
+ */@Entry
 @Component
 struct Index {
   build() {
@@ -17,7 +14,7 @@ struct Index {
           .fontColor('#8A7A6A')
           .padding(14)
           .onClick(() => {
-            router.pushUrl({ url: 'pages/Settings' });
+            this.getUIContext().getRouter().pushUrl({ url: 'pages/Settings' });
           })
       }
       .width('100%')
@@ -56,16 +53,14 @@ struct Index {
           .backgroundColor('#8A7A6A')
           .shadow({ radius: 30, color: 'rgba(122,94,58,0.35)', offsetY: 12 })
           .onClick(() => {
-            router.pushUrl({ url: 'pages/Interview' });
+            this.getUIContext().getRouter().pushUrl({ url: 'pages/Interview' });
           })
 
         Row({ space: 18 }) {
-          Text('🎤 开口即聊')
-          Text('🔊 温柔朗读')
-          Text('🎙️ 方言陪伴')
+          Text('🎤 开口即聊').fontSize(17).fontColor('#6D5A46')
+          Text('🔊 温柔朗读').fontSize(17).fontColor('#6D5A46')
+          Text('🎙️ 方言陪伴').fontSize(17).fontColor('#6D5A46')
         }
-        .fontSize(17)
-        .fontColor('#6D5A46')
         .padding({ top: 12, bottom: 12, left: 24, right: 24 })
         .borderRadius(999)
         .backgroundColor('rgba(255,255,255,0.55)')

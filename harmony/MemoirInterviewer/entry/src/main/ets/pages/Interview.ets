@@ -1,5 +1,4 @@
 import { webview } from '@kit.ArkWeb';
-import { common } from '@kit.AbilityKit';
 import { HarmonyBridge } from '../bridge/HarmonyBridge';
 
 /**
@@ -13,20 +12,26 @@ struct Interview {
   private bridge: HarmonyBridge | null = null;
 
   aboutToAppear(): void {
-    const context = getContext(this) as common.Context;
-    this.bridge = new HarmonyBridge(this.controller, context);
+    const context = this.getUIContext().getHostContext();
+    if (context) {
+      this.bridge = new HarmonyBridge(this.controller, context);
+    }
   }
 
   // 必须在 Web 组件控制器挂载完成后注册 JS 代理
   registerProxy(): void {
     if (this.bridge) {
-      this.controller.registerJavaScriptProxy(this.bridge, 'HarmonyBridge', [
-        'chat',
-        'speak',
-        'listenStart',
-        'listenStop',
-        'goHome'
-      ]);
+      try {
+        this.controller.registerJavaScriptProxy(this.bridge, 'HarmonyBridge', [
+          'chat',
+          'speak',
+          'listenStart',
+          'listenStop',
+          'goHome'
+        ]);
+      } catch (err) {
+        console.error('registerJavaScriptProxy failed');
+      }
     }
   }
 
