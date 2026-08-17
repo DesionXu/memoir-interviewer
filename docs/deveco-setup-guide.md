@@ -1,6 +1,15 @@
 # DevEco Studio 安装与 v0.4 联调指南
 
 > 目标：在 Mac（Apple Silicon）上把鸿蒙工程跑起来，逐项验证功能，把报错发我迭代修复。
+> 当前状态：DevEco Studio 6.1.1 已安装 ✓
+
+## 〇、已安装 DevEco 6.1.1 的注意点
+
+1. 工程按 hvigor 5.0.0 / API 12 配置编写，DevEco 6.x 打开时会提示：
+   - **SDK 组件缺失** → 点"下载"，按提示装 API 12 相关组件
+   - **迁移工程（Migrate）** → 选择**保持现状/稍后再说**即可，不必升级
+   - 若提示缺少 hvigor 相关文件 → 截图发我，我来补
+2. 打开方式：**File → Open** 选 `harmony/MemoirInterviewer` 文件夹
 
 ## 一、安装 DevEco Studio
 

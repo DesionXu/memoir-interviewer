@@ -15,13 +15,19 @@ struct Interview {
   aboutToAppear(): void {
     const context = getContext(this) as common.Context;
     this.bridge = new HarmonyBridge(this.controller, context);
-    this.controller.registerJavaScriptProxy(this.bridge, 'HarmonyBridge', [
-      'chat',
-      'speak',
-      'listenStart',
-      'listenStop',
-      'goHome'
-    ]);
+  }
+
+  // 必须在 Web 组件控制器挂载完成后注册 JS 代理
+  registerProxy(): void {
+    if (this.bridge) {
+      this.controller.registerJavaScriptProxy(this.bridge, 'HarmonyBridge', [
+        'chat',
+        'speak',
+        'listenStart',
+        'listenStop',
+        'goHome'
+      ]);
+    }
   }
 
   build() {
@@ -32,6 +38,9 @@ struct Interview {
         .javaScriptAccess(true)
         .domStorageAccess(true)
         .fileAccess(true)
+        .onControllerAttached(() => {
+          this.registerProxy();
+        })
     }
     .width('100%')
     .height('100%')

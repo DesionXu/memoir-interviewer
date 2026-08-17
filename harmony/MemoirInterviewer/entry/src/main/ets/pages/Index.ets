@@ -51,7 +51,6 @@ struct Index {
 
         Button('📜 开启回忆录', { type: ButtonType.Capsule })
           .fontSize(26)
-          .letterSpacing(6)
           .fontColor(Color.White)
           .height(72)
           .backgroundColor('#8A7A6A')
