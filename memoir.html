@@ -10,175 +10,127 @@
             height: 100%;
             overflow: hidden;
             font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
-            background: #ece4d9;
+            background: #e9e1d6;
         }
         button { touch-action: manipulation; user-select: none; font-family: inherit; }
 
-        /* ===== 应用外壳：手机优先，全屏不滚动 ===== */
+        /* ===== 应用外壳 ===== */
         .app {
             height: 100dvh;
             max-width: 860px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            background: #fffcf9;
+            background: #fffdfa;
         }
 
-        /* ===== 顶部 ===== */
+        /* ===== 顶部：只有标题和一个设置按钮 ===== */
         .app-header {
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 12px 16px 6px;
+            padding: 14px 18px 10px;
+            border-bottom: 1px solid #f0e9df;
         }
         .back-link {
-            font-size: 16px;
+            font-size: 20px;
             color: #8a7a6a;
             text-decoration: none;
-            padding: 4px 6px;
+            padding: 4px;
+            flex-shrink: 0;
         }
-        .back-link:active { opacity: 0.6; }
         .app-header h1 {
-            font-size: 22px;
+            font-size: 26px;
             font-weight: 600;
-            color: #4a3a2c;
-            letter-spacing: 1px;
+            color: #43332a;
         }
-        .app-header .subtitle {
+        .icon-btn {
             margin-left: auto;
-            font-size: 13px;
-            color: #b0a094;
-        }
-
-        /* ===== 语音开关行 ===== */
-        .toggles {
-            display: flex;
-            gap: 8px;
-            padding: 6px 16px 10px;
-            flex-wrap: wrap;
-        }
-        .toggle-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: #faf6f1;
-            border: 1px solid #ece3d7;
+            background: #f3ede4;
+            border: none;
             border-radius: 999px;
-            padding: 5px 12px;
-        }
-        .toggle-label { font-size: 15px; color: #4a3d30; cursor: pointer; }
-        .switch-state { font-size: 14px; font-weight: 600; color: #7a6a58; min-width: 2em; }
-        .switch { position: relative; display: inline-block; width: 50px; height: 28px; flex-shrink: 0; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute; inset: 0;
-            background: #c9c2ba;
-            border-radius: 28px;
-            transition: 0.25s;
+            padding: 10px 20px;
+            font-size: 19px;
+            color: #5a4a3a;
             cursor: pointer;
         }
-        .slider::before {
-            content: '';
-            position: absolute;
-            width: 22px; height: 22px;
-            left: 3px; top: 3px;
-            background: #fff;
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            transition: 0.25s;
-        }
-        .switch input:checked + .slider { background: #7aa05c; }
-        .switch input:checked + .slider::before { transform: translateX(22px); }
-        .switch input:disabled + .slider { opacity: 0.5; cursor: not-allowed; }
-        .dialect-select {
-            font-size: 15px;
-            padding: 5px 10px;
-            border: 1px solid #e6ddd2;
-            border-radius: 999px;
-            background: #fff;
-            color: #4a3d30;
-            font-family: inherit;
-            outline: none;
-        }
+        .icon-btn:active { background: #e9e0d3; }
 
-        /* ===== 对话框：内部滚动 ===== */
+        /* ===== 对话框：唯一滚动的区域 ===== */
         .chat-box {
             flex: 1;
             min-height: 0;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            padding: 14px 16px;
-            background: #faf8f6;
+            padding: 18px 16px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
         }
         .message {
-            max-width: 82%;
-            padding: 12px 16px;
-            border-radius: 18px;
-            line-height: 1.65;
-            font-size: 20px;
+            max-width: 84%;
+            padding: 16px 20px;
+            border-radius: 20px;
+            line-height: 1.75;
+            font-size: 22px;
             word-break: break-word;
             animation: fadeIn 0.3s ease;
         }
         .message.ai {
-            background: #f0e9e0;
-            color: #3d342e;
+            background: #f3ece4;
+            color: #2d241e;
             align-self: flex-start;
-            border-bottom-left-radius: 6px;
-            box-shadow: 0 1px 4px rgba(122,94,58,0.08);
+            border-bottom-left-radius: 8px;
         }
         .message.user {
-            background: linear-gradient(135deg, #9a8876, #7c6a58);
+            background: #7c6a58;
             color: #fff;
             align-self: flex-end;
-            border-bottom-right-radius: 6px;
-            box-shadow: 0 2px 8px rgba(122,94,58,0.25);
+            border-bottom-right-radius: 8px;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ===== 底部输入区（固定） ===== */
+        /* ===== 底部输入区 ===== */
         .composer {
-            background: #fffcf9;
-            border-top: 1px solid #eee5da;
-            padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+            background: #fffdfa;
+            border-top: 1px solid #f0e9df;
+            padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
         }
         .status {
-            font-size: 14px;
-            color: #8a7a68;
+            font-size: 16px;
+            color: #9a8a78;
             text-align: center;
-            padding: 2px 0 6px;
-            min-height: 24px;
+            padding: 2px 0 8px;
+            min-height: 30px;
             line-height: 1.4;
         }
         .input-row {
             display: flex;
-            gap: 10px;
-            align-items: flex-end;
+            gap: 12px;
+            align-items: stretch;
         }
         .input-row textarea {
             flex: 1;
-            padding: 13px 16px;
-            border: 2px solid #e3d9cc;
-            border-radius: 16px;
+            padding: 16px 18px;
+            border: 2px solid #e0d5c6;
+            border-radius: 18px;
             resize: none;
-            font-size: 19px;
+            font-size: 21px;
             font-family: inherit;
             outline: none;
-            min-height: 58px;
-            max-height: 120px;
-            background: #faf8f6;
+            min-height: 64px;
+            max-height: 130px;
+            background: #fbf8f4;
             transition: border 0.2s;
         }
         .input-row textarea:focus { border-color: #8a7a6a; background: #fff; }
         .mic-btn {
-            width: 58px; height: 58px;
+            width: 64px;
             border-radius: 50%;
-            background: #8a7a6a;
+            background: #7c6a58;
             color: #fff;
             border: none;
-            font-size: 26px;
+            font-size: 30px;
             cursor: pointer;
             flex-shrink: 0;
             display: flex;
@@ -190,40 +142,40 @@
         .mic-btn.listening { background: #c0392b; animation: pulse 1.2s infinite; }
         @keyframes pulse {
             0%   { box-shadow: 0 0 0 0 rgba(192,57,43,0.5); }
-            70%  { box-shadow: 0 0 0 14px rgba(192,57,43,0); }
+            70%  { box-shadow: 0 0 0 16px rgba(192,57,43,0); }
             100% { box-shadow: 0 0 0 0 rgba(192,57,43,0); }
         }
         #sendBtn {
             flex: 1;
-            height: 58px;
-            background: #8a7a6a;
+            background: #7c6a58;
             color: #fff;
             border: none;
             border-radius: 999px;
-            font-size: 21px;
-            letter-spacing: 6px;
+            font-size: 23px;
+            letter-spacing: 8px;
             cursor: pointer;
+            min-height: 64px;
             transition: background 0.2s, opacity 0.2s;
         }
-        #sendBtn:active { background: #6d5f52; }
+        #sendBtn:active { background: #6a5a4a; }
         #sendBtn:disabled { opacity: 0.5; }
         .btn-generate {
             width: 100%;
-            margin-top: 8px;
-            padding: 11px;
-            background: #f6f1ea;
-            border: 1.5px dashed #cdbfae;
+            margin-top: 12px;
+            padding: 15px;
+            background: #f3ede4;
+            border: 2px solid #d9cdbb;
             border-radius: 999px;
-            color: #6d5f52;
-            font-size: 16px;
+            color: #4a3a2c;
+            font-size: 20px;
             cursor: pointer;
             transition: background 0.2s;
         }
-        .btn-generate:active { background: #ece4d9; }
+        .btn-generate:active { background: #e9e0d3; }
         .btn-generate:disabled { opacity: 0.5; }
 
-        /* ===== 回忆录底部弹出面板 ===== */
-        .memoir-overlay {
+        /* ===== 底部弹出面板（设置/回忆录共用） ===== */
+        .sheet-overlay {
             position: fixed;
             inset: 0;
             background: rgba(40, 30, 20, 0.45);
@@ -231,47 +183,103 @@
             z-index: 50;
             align-items: flex-end;
         }
-        .memoir-overlay.open { display: flex; }
-        .memoir-panel {
+        .sheet-overlay.open { display: flex; }
+        .sheet-panel {
             width: 100%;
             max-width: 860px;
             margin: 0 auto;
             max-height: 88dvh;
-            background: #fffcf9;
-            border-radius: 22px 22px 0 0;
+            background: #fffdfa;
+            border-radius: 24px 24px 0 0;
             display: flex;
             flex-direction: column;
-            padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
-            animation: slideUp 0.28s ease;
+            padding: 20px 22px calc(20px + env(safe-area-inset-bottom));
+            animation: slideUp 0.25s ease;
         }
         @keyframes slideUp { from { transform: translateY(60%); } to { transform: translateY(0); } }
-        .memoir-head {
+        .sheet-head {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding-bottom: 10px;
+            padding-bottom: 14px;
         }
-        .memoir-head .title { font-size: 19px; font-weight: 600; color: #4a3a2c; }
-        .memoir-head .hint { font-size: 13px; color: #b0a094; }
-        .memoir-close {
+        .sheet-head .title { font-size: 24px; font-weight: 600; color: #4a3a2c; }
+        .sheet-close {
             margin-left: auto;
-            width: 38px; height: 38px;
+            width: 44px; height: 44px;
             border-radius: 50%;
             border: none;
-            background: #f0ebe6;
-            color: #6d5f52;
-            font-size: 18px;
+            background: #f3ede4;
+            color: #5a4a3a;
+            font-size: 20px;
             cursor: pointer;
-            flex-shrink: 0;
         }
+
+        /* 设置面板内容 */
+        .setting-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 18px 0;
+            border-bottom: 1px solid #f0e9df;
+        }
+        .setting-row .s-label { font-size: 22px; color: #43332a; flex: 1; }
+        .switch { position: relative; display: inline-block; width: 66px; height: 38px; flex-shrink: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; inset: 0;
+            background: #cfc6ba;
+            border-radius: 38px;
+            transition: 0.25s;
+            cursor: pointer;
+        }
+        .slider::before {
+            content: '';
+            position: absolute;
+            width: 30px; height: 30px;
+            left: 4px; top: 4px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: 0.25s;
+        }
+        .switch input:checked + .slider { background: #6f9c52; }
+        .switch input:checked + .slider::before { transform: translateX(28px); }
+        .switch input:disabled + .slider { opacity: 0.5; cursor: not-allowed; }
+        .switch-state { font-size: 22px; font-weight: 600; color: #6f9c52; min-width: 2.2em; text-align: right; }
+        .switch-state.off { color: #9a8a78; }
+        .dialect-select {
+            font-size: 21px;
+            padding: 12px 16px;
+            border: 2px solid #e0d5c6;
+            border-radius: 14px;
+            background: #fff;
+            color: #43332a;
+            font-family: inherit;
+            outline: none;
+        }
+        .sheet-done {
+            margin-top: 22px;
+            width: 100%;
+            padding: 16px;
+            background: #7c6a58;
+            border: none;
+            border-radius: 999px;
+            color: #fff;
+            font-size: 22px;
+            letter-spacing: 4px;
+            cursor: pointer;
+        }
+
+        /* 回忆录面板内容 */
+        .memoir-head .hint { font-size: 16px; color: #b0a094; }
         .memory-book {
             flex: 1;
             min-height: 320px;
             width: 100%;
-            padding: 14px;
-            border: 2px solid #e3d9cc;
+            padding: 16px;
+            border: 2px solid #e0d5c6;
             border-radius: 14px;
-            font-size: 17px;
+            font-size: 19px;
             line-height: 1.8;
             color: #3d342e;
             font-family: inherit;
@@ -280,62 +288,35 @@
             background: #fcf8f0;
         }
         .btn-download {
-            margin-top: 12px;
+            margin-top: 14px;
             width: 100%;
-            padding: 14px;
-            background: #7aa05c;
+            padding: 16px;
+            background: #6f9c52;
             border: none;
             border-radius: 999px;
             color: #fff;
-            font-size: 19px;
+            font-size: 21px;
             cursor: pointer;
         }
-        .btn-download:active { background: #64884c; }
+        .btn-download:active { background: #5f8a46; }
     </style>
 </head>
 <body>
 <div class="app">
     <header class="app-header">
-        <a class="back-link" href="index.html" onclick="if (window.HarmonyBridge && window.HarmonyBridge.goHome) { window.HarmonyBridge.goHome(); return false; }">← 返回</a>
+        <a class="back-link" href="index.html" onclick="if (window.HarmonyBridge && window.HarmonyBridge.goHome) { window.HarmonyBridge.goHome(); return false; }">‹</a>
         <h1>📖 回忆录访谈员</h1>
-        <span class="subtitle">🎙️ 慢慢讲，我在认真听</span>
+        <button class="icon-btn" id="settingsBtn">⚙️ 设置</button>
     </header>
-
-    <div class="toggles">
-        <div class="toggle-item">
-            <span class="toggle-label" onclick="document.getElementById('voiceInputToggle').click()">🎤 语音输入</span>
-            <label class="switch">
-                <input type="checkbox" id="voiceInputToggle" checked>
-                <span class="slider"></span>
-            </label>
-            <span class="switch-state" id="voiceInputState">开</span>
-        </div>
-        <div class="toggle-item">
-            <span class="toggle-label" onclick="document.getElementById('voiceOutputToggle').click()">🔊 语音输出</span>
-            <label class="switch">
-                <input type="checkbox" id="voiceOutputToggle" checked>
-                <span class="slider"></span>
-            </label>
-            <span class="switch-state" id="voiceOutputState">开</span>
-        </div>
-        <div class="toggle-item">
-            <span class="toggle-label">🎙️ 方言</span>
-            <select id="dialectSelect" class="dialect-select">
-                <option value="zh-CN" selected>普通话</option>
-                <option value="yue-Hant-HK">粤语（广东话）</option>
-                <option value="zh-TW">台湾国语</option>
-            </select>
-        </div>
-    </div>
 
     <div class="chat-box" id="chatBox">
         <div class="message ai">您好呀，我是您的回忆录访谈员。可以跟我聊聊您小时候住的地方吗？</div>
     </div>
 
     <div class="composer">
-        <div class="status" id="status">💡 点 🎤 开始说话，说完了再点一下 🎤 就会自动发送</div>
+        <div class="status" id="status">💡 点 🎤 说话，说完再点一下就会发送</div>
         <div class="input-row">
-            <textarea id="userInput" rows="2" placeholder="在这里打字，或点 🎤 直接说话…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
+            <textarea id="userInput" rows="2" placeholder="点 🎤 说话，或在这里打字…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
             <button class="mic-btn" id="micBtn" title="点一下开始说话，说完了再点一下发送">🎤</button>
             <button id="sendBtn" onclick="sendMessage()">发 送</button>
         </div>
@@ -343,14 +324,50 @@
     </div>
 </div>
 
-<div class="memoir-overlay" id="memoirOverlay">
-    <div class="memoir-panel">
-        <div class="memoir-head">
+<!-- 设置面板 -->
+<div class="sheet-overlay" id="settingsSheet">
+    <div class="sheet-panel">
+        <div class="sheet-head">
+            <span class="title">⚙️ 设置</span>
+            <button class="sheet-close" id="settingsCloseBtn" title="关闭">✕</button>
+        </div>
+        <div class="setting-row">
+            <span class="s-label">🎤 语音输入</span>
+            <label class="switch">
+                <input type="checkbox" id="voiceInputToggle" checked>
+                <span class="slider"></span>
+            </label>
+            <span class="switch-state" id="voiceInputState">开</span>
+        </div>
+        <div class="setting-row">
+            <span class="s-label">🔊 语音输出</span>
+            <label class="switch">
+                <input type="checkbox" id="voiceOutputToggle" checked>
+                <span class="slider"></span>
+            </label>
+            <span class="switch-state" id="voiceOutputState">开</span>
+        </div>
+        <div class="setting-row">
+            <span class="s-label">🎙️ 方言</span>
+            <select id="dialectSelect" class="dialect-select">
+                <option value="zh-CN" selected>普通话</option>
+                <option value="yue-Hant-HK">粤语（广东话）</option>
+                <option value="zh-TW">台湾国语</option>
+            </select>
+        </div>
+        <button class="sheet-done" id="settingsDoneBtn">完 成</button>
+    </div>
+</div>
+
+<!-- 回忆录面板 -->
+<div class="sheet-overlay" id="memoirOverlay">
+    <div class="sheet-panel">
+        <div class="sheet-head memoir-head">
             <span class="title">📖 您的回忆录</span>
             <span class="hint">可直接修改</span>
-            <button class="memoir-close" id="memoirCloseBtn" title="关闭">✕</button>
+            <button class="sheet-close" id="memoirCloseBtn" title="关闭">✕</button>
         </div>
-        <textarea class="memory-book" id="memoryBook" placeholder="点击主界面的「生成回忆录」按钮，让 AI 把您的故事整理成回忆录…"></textarea>
+        <textarea class="memory-book" id="memoryBook" placeholder="点「生成回忆录」按钮，让 AI 把您的故事整理成回忆录…"></textarea>
         <button class="btn-download" id="downloadBtn" onclick="downloadMemoir()">💾 下载保存（txt 文件）</button>
     </div>
 </div>
@@ -502,6 +519,18 @@ const voiceOutputToggle = document.getElementById('voiceOutputToggle');
 const voiceInputState = document.getElementById('voiceInputState');
 const voiceOutputState = document.getElementById('voiceOutputState');
 const dialectSelect = document.getElementById('dialectSelect');
+const settingsSheet = document.getElementById('settingsSheet');
+const settingsBtn = document.getElementById('settingsBtn');
+const settingsCloseBtn = document.getElementById('settingsCloseBtn');
+const settingsDoneBtn = document.getElementById('settingsDoneBtn');
+
+// ===== 设置面板开关 =====
+function openSettings() { settingsSheet.classList.add('open'); }
+function closeSettings() { settingsSheet.classList.remove('open'); }
+settingsBtn.addEventListener('click', openSettings);
+settingsCloseBtn.addEventListener('click', closeSettings);
+settingsDoneBtn.addEventListener('click', closeSettings);
+settingsSheet.addEventListener('click', (e) => { if (e.target === settingsSheet) closeSettings(); });
 
 // ===== 渲染消息 =====
 function renderMessages() {
@@ -723,6 +752,7 @@ micBtn.addEventListener('click', () => {
 // ===== 语音开关 =====
 voiceInputToggle.addEventListener('change', () => {
     voiceInputState.textContent = voiceInputToggle.checked ? '开' : '关';
+    voiceInputState.classList.toggle('off', !voiceInputToggle.checked);
     micBtn.style.display = (voiceInputToggle.checked && asrAvailable()) ? 'flex' : 'none';
     if (!voiceInputToggle.checked && listening) {
         stopRequested = true;
@@ -734,6 +764,7 @@ voiceInputToggle.addEventListener('change', () => {
 });
 voiceOutputToggle.addEventListener('change', () => {
     voiceOutputState.textContent = voiceOutputToggle.checked ? '开' : '关';
+    voiceOutputState.classList.toggle('off', !voiceOutputToggle.checked);
     if (!voiceOutputToggle.checked && speechSupported) speechSynthesis.cancel();
 });
 
@@ -947,6 +978,7 @@ if (!recognitionSupported) {
     voiceInputToggle.checked = false;
     voiceInputToggle.disabled = true;
     voiceInputState.textContent = '不支持';
+    voiceInputState.classList.add('off');
     micBtn.style.display = 'none';
     statusEl.textContent = '⚠️ 此浏览器不支持语音输入，请换用 Chrome 或 Edge 浏览器';
 }
@@ -957,6 +989,7 @@ setTimeout(() => {
         voiceInputToggle.disabled = false;
         voiceInputToggle.checked = true;
         voiceInputState.textContent = '开';
+        voiceInputState.classList.remove('off');
         micBtn.style.display = 'flex';
         statusEl.textContent = '💡 点 🎤 开始说话，说完了再点一下 🎤 就会自动发送';
     }
@@ -964,12 +997,14 @@ setTimeout(() => {
         voiceOutputToggle.disabled = false;
         voiceOutputToggle.checked = true;
         voiceOutputState.textContent = '开';
+        voiceOutputState.classList.remove('off');
     }
 }, 2000);
 if (!speechSupported && !hasNativeSpeak()) {
     voiceOutputToggle.checked = false;
     voiceOutputToggle.disabled = true;
     voiceOutputState.textContent = '不支持';
+    voiceOutputState.classList.add('off');
 }
 </script>
 </body>
