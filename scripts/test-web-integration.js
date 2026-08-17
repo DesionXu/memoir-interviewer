@@ -116,7 +116,12 @@ async function main() {
   ok('回忆录：两次续写拼接完整', book.includes('母亲做的饭很香') && book.includes('县城学徒'));
   ok('回忆录：含页码', /— 第 \d+ 页 —/.test(book));
   ok('回忆录：章节结构保留', book.includes('第一章 童年与大槐树'));
-  ok('回忆录：下载按钮已显示', w.document.getElementById('downloadBtn').style.display === 'block');
+  ok('回忆录：底部面板已打开', w.document.getElementById('memoirOverlay').classList.contains('open'));
+  // 关闭面板
+  w.closeMemoirPanel();
+  ok('回忆录：面板可关闭', !w.document.getElementById('memoirOverlay').classList.contains('open'));
+  w.openMemoirPanel();
+  ok('回忆录：面板可重新打开', w.document.getElementById('memoirOverlay').classList.contains('open'));
 
   // ===== 5. 原生语音输入流程 =====
   bridge.listenStartCalls = 0;

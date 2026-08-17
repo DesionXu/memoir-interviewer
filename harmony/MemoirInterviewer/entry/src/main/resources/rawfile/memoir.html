@@ -2,259 +2,304 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>回忆录访谈员 · 语音访谈</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { font-size: 18px; }
-        body {
+        html, body {
+            height: 100%;
+            overflow: hidden;
             font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
-            background: #f5f0eb;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 16px;
+            background: #ece4d9;
         }
-        .container {
-            width: 100%;
+        button { touch-action: manipulation; user-select: none; font-family: inherit; }
+
+        /* ===== 应用外壳：手机优先，全屏不滚动 ===== */
+        .app {
+            height: 100dvh;
             max-width: 860px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
             background: #fffcf9;
-            border-radius: 24px;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
-            padding: 28px;
         }
-        h1 {
-            font-size: 32px;
-            font-weight: 600;
-            color: #5a4a3a;
-            margin-bottom: 4px;
+
+        /* ===== 顶部 ===== */
+        .app-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px 6px;
         }
         .back-link {
-            display: inline-block;
             font-size: 16px;
             color: #8a7a6a;
             text-decoration: none;
-            margin-bottom: 10px;
+            padding: 4px 6px;
         }
-        .back-link:hover { text-decoration: underline; }
-        .subtitle {
-            font-size: 18px;
-            color: #a4937f;
-            margin-bottom: 18px;
+        .back-link:active { opacity: 0.6; }
+        .app-header h1 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #4a3a2c;
+            letter-spacing: 1px;
+        }
+        .app-header .subtitle {
+            margin-left: auto;
+            font-size: 13px;
+            color: #b0a094;
         }
 
-        /* ===== 语音开关 ===== */
+        /* ===== 语音开关行 ===== */
         .toggles {
             display: flex;
-            gap: 14px;
-            margin-bottom: 16px;
+            gap: 8px;
+            padding: 6px 16px 10px;
             flex-wrap: wrap;
         }
         .toggle-item {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
             background: #faf6f1;
-            border: 1px solid #e6ddd2;
-            border-radius: 16px;
-            padding: 10px 16px;
+            border: 1px solid #ece3d7;
+            border-radius: 999px;
+            padding: 5px 12px;
         }
-        .toggle-label { font-size: 20px; color: #4a3d30; cursor: pointer; }
-        .switch-state {
-            font-size: 19px;
-            font-weight: 600;
-            color: #7a6a58;
-            min-width: 2.4em;
-        }
-        .switch { position: relative; display: inline-block; width: 68px; height: 38px; flex-shrink: 0; }
+        .toggle-label { font-size: 15px; color: #4a3d30; cursor: pointer; }
+        .switch-state { font-size: 14px; font-weight: 600; color: #7a6a58; min-width: 2em; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 28px; flex-shrink: 0; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
             position: absolute; inset: 0;
             background: #c9c2ba;
-            border-radius: 38px;
+            border-radius: 28px;
             transition: 0.25s;
             cursor: pointer;
         }
         .slider::before {
             content: '';
             position: absolute;
-            width: 30px; height: 30px;
-            left: 4px; top: 4px;
+            width: 22px; height: 22px;
+            left: 3px; top: 3px;
             background: #fff;
             border-radius: 50%;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             transition: 0.25s;
         }
         .switch input:checked + .slider { background: #7aa05c; }
-        .switch input:checked + .slider::before { transform: translateX(30px); }
+        .switch input:checked + .slider::before { transform: translateX(22px); }
         .switch input:disabled + .slider { opacity: 0.5; cursor: not-allowed; }
         .dialect-select {
-            font-size: 20px;
-            padding: 10px 14px;
-            border: 2px solid #d8cdc0;
-            border-radius: 12px;
+            font-size: 15px;
+            padding: 5px 10px;
+            border: 1px solid #e6ddd2;
+            border-radius: 999px;
             background: #fff;
             color: #4a3d30;
             font-family: inherit;
             outline: none;
-            cursor: pointer;
         }
 
-        /* ===== 聊天区 ===== */
+        /* ===== 对话框：内部滚动 ===== */
         .chat-box {
-            height: 440px;
+            flex: 1;
+            min-height: 0;
             overflow-y: auto;
-            padding: 18px;
+            -webkit-overflow-scrolling: touch;
+            padding: 14px 16px;
             background: #faf8f6;
-            border-radius: 18px;
-            margin-bottom: 16px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 12px;
         }
         .message {
-            max-width: 88%;
-            padding: 14px 22px;
-            border-radius: 22px;
-            line-height: 1.75;
-            font-size: 21px;
+            max-width: 82%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            line-height: 1.65;
+            font-size: 20px;
+            word-break: break-word;
             animation: fadeIn 0.3s ease;
         }
         .message.ai {
-            background: #e8e0d8;
+            background: #f0e9e0;
             color: #3d342e;
             align-self: flex-start;
             border-bottom-left-radius: 6px;
+            box-shadow: 0 1px 4px rgba(122,94,58,0.08);
         }
         .message.user {
-            background: #cbb9a8;
-            color: #2d241e;
+            background: linear-gradient(135deg, #9a8876, #7c6a58);
+            color: #fff;
             align-self: flex-end;
             border-bottom-right-radius: 6px;
+            box-shadow: 0 2px 8px rgba(122,94,58,0.25);
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ===== 输入区 ===== */
-        .input-area textarea {
-            width: 100%;
-            padding: 16px 20px;
-            border: 2px solid #d8cdc0;
-            border-radius: 18px;
+        /* ===== 底部输入区（固定） ===== */
+        .composer {
+            background: #fffcf9;
+            border-top: 1px solid #eee5da;
+            padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+        }
+        .status {
+            font-size: 14px;
+            color: #8a7a68;
+            text-align: center;
+            padding: 2px 0 6px;
+            min-height: 24px;
+            line-height: 1.4;
+        }
+        .input-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+        .input-row textarea {
+            flex: 1;
+            padding: 13px 16px;
+            border: 2px solid #e3d9cc;
+            border-radius: 16px;
             resize: none;
-            font-size: 21px;
+            font-size: 19px;
             font-family: inherit;
             outline: none;
-            min-height: 70px;
-            background: #fff;
+            min-height: 58px;
+            max-height: 120px;
+            background: #faf8f6;
             transition: border 0.2s;
         }
-        .input-area textarea:focus { border-color: #8a7a6a; }
-        .btn-row { display: flex; gap: 14px; margin-top: 12px; }
+        .input-row textarea:focus { border-color: #8a7a6a; background: #fff; }
         .mic-btn {
-            width: 72px; height: 72px;
+            width: 58px; height: 58px;
             border-radius: 50%;
             background: #8a7a6a;
             color: #fff;
             border: none;
-            font-size: 32px;
+            font-size: 26px;
             cursor: pointer;
             flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.2s;
-            touch-action: manipulation;
-            user-select: none;
+            transition: background 0.2s, transform 0.1s;
         }
-        .mic-btn:hover { background: #6d5f52; }
+        .mic-btn:active { transform: scale(0.94); }
         .mic-btn.listening { background: #c0392b; animation: pulse 1.2s infinite; }
         @keyframes pulse {
             0%   { box-shadow: 0 0 0 0 rgba(192,57,43,0.5); }
-            70%  { box-shadow: 0 0 0 20px rgba(192,57,43,0); }
+            70%  { box-shadow: 0 0 0 14px rgba(192,57,43,0); }
             100% { box-shadow: 0 0 0 0 rgba(192,57,43,0); }
         }
         #sendBtn {
             flex: 1;
-            height: 72px;
+            height: 58px;
             background: #8a7a6a;
             color: #fff;
             border: none;
-            border-radius: 36px;
-            font-size: 24px;
+            border-radius: 999px;
+            font-size: 21px;
             letter-spacing: 6px;
             cursor: pointer;
-            transition: background 0.2s;
-            touch-action: manipulation;
-            user-select: none;
+            transition: background 0.2s, opacity 0.2s;
         }
-        #sendBtn:hover { background: #6d5f52; }
-        #sendBtn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .status {
-            font-size: 18px;
-            color: #8a7a68;
-            margin-top: 14px;
-            text-align: center;
-            line-height: 1.5;
-        }
-
-        /* ===== 回忆录按钮与展示 ===== */
+        #sendBtn:active { background: #6d5f52; }
+        #sendBtn:disabled { opacity: 0.5; }
         .btn-generate {
             width: 100%;
-            padding: 18px;
-            background: #f0ebe6;
-            border: 2px solid #d8cdc0;
-            border-radius: 18px;
-            color: #5a4a3a;
-            font-size: 21px;
+            margin-top: 8px;
+            padding: 11px;
+            background: #f6f1ea;
+            border: 1.5px dashed #cdbfae;
+            border-radius: 999px;
+            color: #6d5f52;
+            font-size: 16px;
             cursor: pointer;
-            margin-top: 14px;
             transition: background 0.2s;
-            touch-action: manipulation;
-            user-select: none;
         }
-        .btn-generate:hover { background: #e8e0d8; }
-        .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
-        .memory-book {
-            width: 100%;
-            margin-top: 16px;
-            padding: 20px;
-            background: #fcf8f0;
-            border: 2px solid #d8cdc0;
-            border-radius: 16px;
+        .btn-generate:active { background: #ece4d9; }
+        .btn-generate:disabled { opacity: 0.5; }
+
+        /* ===== 回忆录底部弹出面板 ===== */
+        .memoir-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(40, 30, 20, 0.45);
             display: none;
-            font-size: 20px;
+            z-index: 50;
+            align-items: flex-end;
+        }
+        .memoir-overlay.open { display: flex; }
+        .memoir-panel {
+            width: 100%;
+            max-width: 860px;
+            margin: 0 auto;
+            max-height: 88dvh;
+            background: #fffcf9;
+            border-radius: 22px 22px 0 0;
+            display: flex;
+            flex-direction: column;
+            padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+            animation: slideUp 0.28s ease;
+        }
+        @keyframes slideUp { from { transform: translateY(60%); } to { transform: translateY(0); } }
+        .memoir-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 10px;
+        }
+        .memoir-head .title { font-size: 19px; font-weight: 600; color: #4a3a2c; }
+        .memoir-head .hint { font-size: 13px; color: #b0a094; }
+        .memoir-close {
+            margin-left: auto;
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            border: none;
+            background: #f0ebe6;
+            color: #6d5f52;
+            font-size: 18px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .memory-book {
+            flex: 1;
+            min-height: 320px;
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e3d9cc;
+            border-radius: 14px;
+            font-size: 17px;
             line-height: 1.8;
             color: #3d342e;
             font-family: inherit;
-            resize: vertical;
-            min-height: 340px;
+            resize: none;
             outline: none;
+            background: #fcf8f0;
         }
-        .memory-book.visible { display: block; }
         .btn-download {
+            margin-top: 12px;
             width: 100%;
-            padding: 18px;
+            padding: 14px;
             background: #7aa05c;
             border: none;
-            border-radius: 18px;
+            border-radius: 999px;
             color: #fff;
-            font-size: 21px;
+            font-size: 19px;
             cursor: pointer;
-            margin-top: 12px;
-            transition: background 0.2s;
-            touch-action: manipulation;
-            user-select: none;
         }
-        .btn-download:hover { background: #64884c; }
+        .btn-download:active { background: #64884c; }
     </style>
 </head>
 <body>
-<div class="container">
-    <a class="back-link" href="index.html" onclick="if (window.HarmonyBridge && window.HarmonyBridge.goHome) { window.HarmonyBridge.goHome(); return false; }">← 返回首页</a>
-    <h1>📖 回忆录访谈员</h1>
-    <div class="subtitle">🎙️ 慢慢讲，我在认真听</div>
+<div class="app">
+    <header class="app-header">
+        <a class="back-link" href="index.html" onclick="if (window.HarmonyBridge && window.HarmonyBridge.goHome) { window.HarmonyBridge.goHome(); return false; }">← 返回</a>
+        <h1>📖 回忆录访谈员</h1>
+        <span class="subtitle">🎙️ 慢慢讲，我在认真听</span>
+    </header>
 
     <div class="toggles">
         <div class="toggle-item">
@@ -287,18 +332,27 @@
         <div class="message ai">您好呀，我是您的回忆录访谈员。可以跟我聊聊您小时候住的地方吗？</div>
     </div>
 
-    <div class="input-area">
-        <textarea id="userInput" rows="2" placeholder="在这里打字，或点 🎤 直接说话…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
-        <div class="btn-row">
+    <div class="composer">
+        <div class="status" id="status">💡 点 🎤 开始说话，说完了再点一下 🎤 就会自动发送</div>
+        <div class="input-row">
+            <textarea id="userInput" rows="2" placeholder="在这里打字，或点 🎤 直接说话…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
             <button class="mic-btn" id="micBtn" title="点一下开始说话，说完了再点一下发送">🎤</button>
             <button id="sendBtn" onclick="sendMessage()">发 送</button>
         </div>
+        <button class="btn-generate" id="generateBtn" onclick="generateMemoir()">📝 生成回忆录</button>
     </div>
-    <div class="status" id="status">💡 点 🎤 开始说话，说完了再点一下 🎤 就会自动发送</div>
+</div>
 
-    <button class="btn-generate" id="generateBtn" onclick="generateMemoir()">📝 生成回忆录</button>
-    <textarea class="memory-book" id="memoryBook" placeholder="点击上面的按钮，让 AI 把您的故事整理成回忆录…"></textarea>
-    <button class="btn-download" id="downloadBtn" onclick="downloadMemoir()" style="display:none">💾 下载回忆录（保存为 txt 文件）</button>
+<div class="memoir-overlay" id="memoirOverlay">
+    <div class="memoir-panel">
+        <div class="memoir-head">
+            <span class="title">📖 您的回忆录</span>
+            <span class="hint">可直接修改</span>
+            <button class="memoir-close" id="memoirCloseBtn" title="关闭">✕</button>
+        </div>
+        <textarea class="memory-book" id="memoryBook" placeholder="点击主界面的「生成回忆录」按钮，让 AI 把您的故事整理成回忆录…"></textarea>
+        <button class="btn-download" id="downloadBtn" onclick="downloadMemoir()">💾 下载保存（txt 文件）</button>
+    </div>
 </div>
 
 <script src="config.js"></script>
@@ -440,6 +494,8 @@ const statusEl = document.getElementById('status');
 const memoryBook = document.getElementById('memoryBook');
 const generateBtn = document.getElementById('generateBtn');
 const downloadBtn = document.getElementById('downloadBtn');
+const memoirOverlay = document.getElementById('memoirOverlay');
+const memoirCloseBtn = document.getElementById('memoirCloseBtn');
 const micBtn = document.getElementById('micBtn');
 const voiceInputToggle = document.getElementById('voiceInputToggle');
 const voiceOutputToggle = document.getElementById('voiceOutputToggle');
@@ -787,9 +843,8 @@ async function generateMemoir() {
         const paged = paginateMemoir(memoirText);
 
         memoryBook.value = paged;
-        memoryBook.classList.add('visible');
-        downloadBtn.style.display = 'block';
-        statusEl.textContent = '📖 回忆录已生成！您可以直接修改下方文字，修改好后点"下载"保存';
+        openMemoirPanel();
+        statusEl.textContent = '📖 回忆录已生成！可直接修改，再点"下载保存"';
 
         // 自动朗读开篇概要
         const m = memoirText.match(/【开篇概要】\s*([\s\S]*?)(?=【目录】|$)/);
@@ -843,6 +898,18 @@ function paginateMemoir(text, charsPerPage = 500) {
         p.join('\n\n') + '\n\n— 第 ' + (i + 1) + ' 页 —'
     ).join('\n\n\n');
 }
+
+// ===== 回忆录面板开关 =====
+function openMemoirPanel() {
+    memoirOverlay.classList.add('open');
+}
+function closeMemoirPanel() {
+    memoirOverlay.classList.remove('open');
+}
+memoirCloseBtn.addEventListener('click', closeMemoirPanel);
+memoirOverlay.addEventListener('click', (e) => {
+    if (e.target === memoirOverlay) closeMemoirPanel();
+});
 
 // ===== 下载回忆录为 txt 文件 =====
 function downloadMemoir() {
