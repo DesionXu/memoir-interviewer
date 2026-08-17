@@ -1,10 +1,10 @@
 /**
  * 应用配置
- * 注意：正式打包前请填写 API_KEY；后续版本会提供设置页管理，避免硬编码。
+ * API Key 优先从"设置"页填写（保存在本机 preferences），未设置时使用此默认值。
  */
 export class AppConfig {
   // DeepSeek 配置
-  static readonly API_KEY: string = 'YOUR_API_KEY_HERE';
+  static readonly DEFAULT_API_KEY: string = 'YOUR_API_KEY_HERE';
   static readonly API_URL: string = 'https://api.deepseek.com/v1/chat/completions';
   static readonly MODEL: string = 'deepseek-v4-pro';
 

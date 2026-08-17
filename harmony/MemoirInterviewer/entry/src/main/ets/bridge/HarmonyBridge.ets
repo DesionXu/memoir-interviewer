@@ -1,8 +1,12 @@
 import { webview } from '@kit.ArkWeb';
+import { common } from '@kit.AbilityKit';
+import { router } from '@kit.ArkUI';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { ChatMessage, callChatApi } from '../service/ApiService';
 import { TtsService } from '../service/TtsService';
 import { AsrService } from '../service/AsrService';
+import { SettingsService } from '../service/SettingsService';
+import { ensureMicPermission } from '../service/PermissionUtil';
 
 const DOMAIN: number = 0x0000;
 
@@ -11,15 +15,20 @@ const DOMAIN: number = 0x0000;
  * - chat(messagesJson, maxTokens, temperature, callbackId)：调用 DeepSeek，
  *   结果通过 window.__bridgeResolve/__bridgeReject 异步回传（原始 JSON 字符串）
  * - speak(text)：原生朗读
- * - listenStart()/listenStop()：原生语音识别，结果通过 window.__bridgeOnAsr 回传
+ * - listenStart()/listenStop()：原生语音识别（含麦克风权限申请），
+ *   结果通过 window.__bridgeOnAsr 回传
+ * - goHome()：返回原生欢迎页
  */
 export class HarmonyBridge {
   private controller: webview.WebviewController;
+  private context: common.Context;
   private tts: TtsService = new TtsService();
   private asr: AsrService = new AsrService();
 
-  constructor(controller: webview.WebviewController) {
+  constructor(controller: webview.WebviewController, context: common.Context) {
     this.controller = controller;
+    this.context = context;
+    SettingsService.init(context);
     this.tts.init();
     this.asr.init();
     this.asr.onResult = (finalText: string, interimText: string) => {
@@ -68,14 +77,26 @@ export class HarmonyBridge {
     this.tts.speak(text);
   }
 
-  // 网页调用：HarmonyBridge.listenStart()
+  // 网页调用：HarmonyBridge.listenStart()（先申请麦克风权限再开始识别）
   listenStart(): void {
     this.tts.stop();   // 开始听时停止朗读，避免抢话
-    this.asr.start();
+    ensureMicPermission(this.context).then((granted: boolean) => {
+      if (granted) {
+        this.asr.start();
+      } else {
+        this.runJs('window.__bridgeOnAsrError(' +
+          JSON.stringify(JSON.stringify('未获得麦克风权限，请在系统设置中允许')) + ')');
+      }
+    });
   }
 
   // 网页调用：HarmonyBridge.listenStop()
   listenStop(): void {
     this.asr.stop();
+  }
+
+  // 网页调用：HarmonyBridge.goHome()（返回原生欢迎页）
+  goHome(): void {
+    router.back();
   }
 }

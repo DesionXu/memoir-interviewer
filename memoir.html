@@ -252,7 +252,7 @@
 </head>
 <body>
 <div class="container">
-    <a class="back-link" href="index.html">← 返回首页</a>
+    <a class="back-link" href="index.html" onclick="if (window.HarmonyBridge && window.HarmonyBridge.goHome) { window.HarmonyBridge.goHome(); return false; }">← 返回首页</a>
     <h1>📖 回忆录访谈员</h1>
     <div class="subtitle">🎙️ 慢慢讲，我在认真听</div>
 
@@ -507,8 +507,15 @@ document.addEventListener('keydown', unlockTTS, { once: true });
 
 // ===== 语音输入（识别） =====
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-const harmonyAsr = !!(window.HarmonyBridge && typeof window.HarmonyBridge.listenStart === 'function');
-const recognitionSupported = !!SR || harmonyAsr;
+// 鸿蒙原生桥接的注入可能晚于页面脚本执行，因此用函数动态判断
+function hasNativeAsr() {
+    return !!(window.HarmonyBridge && typeof window.HarmonyBridge.listenStart === 'function');
+}
+let harmonyAsr = hasNativeAsr();
+function asrAvailable() {
+    return !!SR || harmonyAsr;
+}
+const recognitionSupported = asrAvailable();
 let recognition = null;
 let listening = false;
 let stopRequested = false;
@@ -579,7 +586,7 @@ function safeStart() {
 }
 
 function startListening() {
-    if (!recognitionSupported || !voiceInputToggle.checked || listening) return;
+    if (!asrAvailable() || !voiceInputToggle.checked || listening) return;
     speechSynthesis.cancel();              // 停止朗读，安静听老人说话
     baseText = userInput.value.trim();
     finalTranscript = '';
@@ -639,7 +646,7 @@ micBtn.addEventListener('click', () => {
 // ===== 语音开关 =====
 voiceInputToggle.addEventListener('change', () => {
     voiceInputState.textContent = voiceInputToggle.checked ? '开' : '关';
-    micBtn.style.display = (voiceInputToggle.checked && recognitionSupported) ? 'flex' : 'none';
+    micBtn.style.display = (voiceInputToggle.checked && asrAvailable()) ? 'flex' : 'none';
     if (!voiceInputToggle.checked && listening) {
         stopRequested = true;
         try { recognition.stop(); } catch (e) {}
@@ -833,6 +840,7 @@ userInput.focus();
 
 // 检查配置：公网部署走后端代理时无需本地 Key；本地打开则需要 config.js
 (async () => {
+    if (hasNativeAsr()) return;   // 鸿蒙应用内：Key 由原生设置页管理
     let hasBackend = false;
     try {
         const r = await fetch('/api/health');
@@ -849,6 +857,17 @@ if (!recognitionSupported) {
     micBtn.style.display = 'none';
     statusEl.textContent = '⚠️ 此浏览器不支持语音输入，请换用 Chrome 或 Edge 浏览器';
 }
+// 鸿蒙原生桥接注入可能晚于页面脚本：延迟再探测一次并启用语音输入
+setTimeout(() => {
+    if (!harmonyAsr && hasNativeAsr()) {
+        harmonyAsr = true;
+        voiceInputToggle.disabled = false;
+        voiceInputToggle.checked = true;
+        voiceInputState.textContent = '开';
+        micBtn.style.display = 'flex';
+        statusEl.textContent = '💡 点 🎤 开始说话，说完了再点一下 🎤 就会自动发送';
+    }
+}, 2000);
 if (!speechSupported) {
     voiceOutputToggle.checked = false;
     voiceOutputToggle.disabled = true;

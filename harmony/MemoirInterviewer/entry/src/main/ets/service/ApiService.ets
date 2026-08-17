@@ -2,6 +2,7 @@ import { http } from '@kit.NetworkKit';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { AppConfig } from './Config';
+import { SettingsService } from './SettingsService';
 
 const DOMAIN: number = 0x0000;
 
@@ -13,15 +14,21 @@ export interface ChatMessage {
 /**
  * 调用 DeepSeek Chat Completions，返回 OpenAI 格式的原始 JSON 字符串，
  * 由网页端 JSON.parse 后按既有逻辑解析（choices[0].message.content 等）。
+ * API Key 从本机设置读取，网页端无法接触到。
  */
 export async function callChatApi(messages: ChatMessage[], maxTokens: number, temperature: number): Promise<string> {
+  const apiKey = await SettingsService.getApiKey();
+  if (!apiKey || apiKey === AppConfig.DEFAULT_API_KEY || apiKey === '') {
+    throw new Error('请先在"设置"页填写 DeepSeek API Key');
+  }
+
   const request = http.createHttp();
   try {
     const response = await request.request(AppConfig.API_URL, {
       method: http.RequestMethod.POST,
       header: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + AppConfig.API_KEY
+        'Authorization': 'Bearer ' + apiKey
       },
       extraData: JSON.stringify({
         model: AppConfig.MODEL,
