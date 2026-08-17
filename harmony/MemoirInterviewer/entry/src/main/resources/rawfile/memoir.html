@@ -819,11 +819,16 @@ function paginateMemoir(text, charsPerPage = 500) {
     for (const block of blocks) {
         const isSection = /^【.+】/.test(block);
         if (isSection) {
-            flush();
+            // 【正文】标记不单独成页，与第一章共用一页
+            if (!block.includes('正文')) flush();
             inToc = block.includes('目录');
         }
         const isChapter = !inToc && /^第[一二三四五六七八九十百0-9０-９]+章/.test(block);
-        if (isChapter) flush();
+        if (isChapter) {
+            // 上一块若是标记行（如【正文】），不另起页
+            const lastIsMarker = page.length > 0 && /^【|^第/.test(page[page.length - 1]);
+            if (!lastIsMarker) flush();
+        }
 
         page.push(block);
         len += block.length;
