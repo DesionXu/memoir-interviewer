@@ -22,7 +22,8 @@
 - [ ] 打开工程 harmony/MemoirInterviewer 并在模拟器/真机联调全部功能（联调清单见 docs/deveco-setup-guide.md）
 - [x] API Key 方案：内置开发者 Key 开箱即聊（构建时注入，仓库无泄露）+ 设置页可自定义覆盖
 - [ ] ⚠️ 公开发布前：DeepSeek 控制台设置消费上限与告警；规划收费门槛与防滥用（Key 可被逆向提取）
-- [ ] 包名确认：AGC 创建应用后，把 AppScope/app.json5 的 bundleName 改成与 AGC 一致的唯一包名（当前占位 com.memoir.interviewer）
+- [x] 包名确认：正式包名 **com.dowson.memoir** 已写入代码（AGC 创建应用时使用同一包名）
+- [ ] 重新生成签名证书（旧证书绑定占位包名 com.memoir.interviewer，需按 deveco-setup-guide 六.0 重走自动签名）
 - [ ] 更换正式应用图标（当前为占位图，建议 1024×1024 设计稿）
 
 ## 三、AGC（AppGallery Connect）与签名

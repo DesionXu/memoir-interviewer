@@ -1,6 +1,6 @@
 {
   "app": {
-    "bundleName": "com.memoir.interviewer",
+    "bundleName": "com.dowson.memoir",
     "vendor": "memoir",
     "versionCode": 1000000,
     "versionName": "1.0.0",
