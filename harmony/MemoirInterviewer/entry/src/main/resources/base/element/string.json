@@ -1,0 +1,20 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "回忆录访谈员主模块"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "为长辈设计的AI回忆录访谈应用"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "回忆录访谈员"
+    },
+    {
+      "name": "mic_reason",
+      "value": "用于听取您的讲述并将语音转成文字"
+    }
+  ]
+}
