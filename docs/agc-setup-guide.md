@@ -22,21 +22,51 @@
 3. 若提示需要配置 `client_id` 等，按 AGC 指引操作
 4. 代码侧无需改动：`Config.ets` 里 `TTS_ONLINE=1`、`ASR_ONLINE=1` 即走在线模式
 
-## 三、生成签名证书与 Profile
+## 三、生成签名证书与 Profile（Release 手动流程，不需要设备）
 
-> 关键：**发布（release）类型的签名不需要绑定设备**。之前报"缺乏设备无法新建 profile"是因为走了调试（debug）类型——调试签名才需要设备 UDID。上架用的是 release 签名。
+> DevEco 的"Automatically generate signature"只生成调试证书（需绑定设备）。
+> 上架需要**发布（Release）签名**，用手动流程：本地生成密钥 → AGC 换发布证书 → AGC 生成发布 Profile → 回填 DevEco。
 
-1. DevEco Studio 打开工程
-2. **File → Project Structure → Signing Configs**
-3. 勾选 **Automatically generate signature**，登录华为账号
-4. 在自动签名弹窗里，如果可以选择 profile 类型：选 **Release（发布）**
-   - 若弹窗要求选择 AGC 项目/应用：选择"回忆录访谈员"项目下的 com.dowson.memoir 应用
-   - 若仍要求"添加设备"：说明选到了 Debug 类型，返回改选 Release
-5. 完成后 `.p12`/`.cer`/`.p7b` 写入 `build-profile.json5` 的 `signingConfigs`
-6. **Build → Build App(s)/Hap(s) → release** → 产物 `entry/build/default/outputs/default/*-signed.hap` 或 `.app` 文件
+**第 1 步：本地生成密钥与证书请求（CSR）**
+1. DevEco 菜单：**Build → Generate Key and CSR**
+2. 弹窗填写：
+   - Key Store File：选一个保存路径（如 `~/Downloads/memoir-release.p12`），点新建
+   - Password / Confirm Password：**自定密码**（记下来，如 `memoir123456`）
+   - Alias：`memoir`
+   - Key Password：同上（勾选与 store 密码一致即可）
+   - Validity：默认 25 年
+   - 证书信息：First and Last Name 填你的名字拼音/开发者名，其余可留空，Country 填 CN
+3. 点 Finish → 生成 `.p12`（密钥库）和 `.csr`（证书请求）两个文件
 
-> 若自动签名始终无法生成 release 证书，备选流程：
-> DevEco → Build → Generate Key and CSR → 生成证书请求 → 去 AGC → 用户与访问 → 证书管理 → 上传 CSR → 下载发布证书 → 回 DevEco 配置。卡住发截图。
+**第 2 步：AGC 换发布证书（.cer）**
+1. AGC 控制台 → 你的项目 → **用户与访问（Users and access）→ 证书管理（Certificate management）**
+2. **新增证书** → 上传刚才的 `.csr` 文件 → 证书类型选 **发布（Release）** → 提交
+3. 证书列表里找到刚生成的证书 → **下载** `.cer` 文件
+
+**第 3 步：AGC 生成发布 Profile（.p7b）**
+1. AGC 控制台 → 项目 → **项目设置 → HAP Provision Profile**（部分版本在"分发"相关菜单下）
+2. **添加** → Profile 类型选 **Release** → 选择包名 **com.dowson.memoir** → 选择刚上传的发布证书
+3. 生成后**下载** `.p7b` 文件
+
+**第 4 步：回填 DevEco 签名配置**
+1. **File → Project Structure（⌘;）→ Signing Configs**
+2. **取消勾选** Automatically generate signature（改用手动）
+3. 手动填写：
+   - Store File：选第 1 步的 `.p12`
+   - Store Password：你设的密码
+   - Key Alias：`memoir`
+   - Key Password：你设的密码
+   - Sign Alg：`SHA256withECDSA`
+   - Profile File：选第 3 步的 `.p7b`
+   - Certpath：选第 2 步的 `.cer`
+4. **Apply → OK**
+
+**第 5 步：构建发布包**
+1. **Build → Build App(s)/Hap(s) → release**
+2. 产物：`entry/build/default/outputs/default/` 下的 `.app` 或 `-signed.hap`（签名版）
+3. 用这个包在 AGC 上传提审
+
+> 模拟器本地体验可跳过以上全部：未签名 HAP 可直接 `hdc install`（已实测）。
 
 ## 四、真机调试（可选）
 
