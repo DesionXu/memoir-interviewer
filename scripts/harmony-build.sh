@@ -82,6 +82,44 @@ PYEOF
       -outFile "$SIGNED" \
       && echo "✅ 已签名：$SIGNED"
   fi
+
+  # 4) 打包 .app（AGC 上架要求的格式；工具临时目录在 ~/Downloads/tempHapDir）
+  if [ -f "$SIGNED" ]; then
+    mkdir -p "$HOME/Downloads/tempHapDir" 2>/dev/null || true
+    cat > /tmp/pack.info <<EOF
+{
+  "summary": {
+    "app": {
+      "bundleName": "com.dowson.memoir",
+      "version": { "code": 1000000, "name": "1.0.0" },
+      "vendor": "memoir"
+    },
+    "modules": [
+      {
+        "mainAbility": "EntryAbility",
+        "deviceType": ["phone", "tablet", "2in1"],
+        "apiVersion": { "compatible": 12, "target": 24, "releaseType": "Release" },
+        "distributionType": "app_gallery",
+        "moduleName": "entry",
+        "moduleType": "entry"
+      }
+    ]
+  },
+  "packages": [
+    {
+      "deviceType": ["phone", "tablet", "2in1"],
+      "moduleType": "entry",
+      "name": "entry",
+      "deliveryWithInstall": true
+    }
+  ]
+}
+EOF
+    APP_OUT="$PROJECT/entry/build/default/outputs/default/entry-default-signed.app"
+    "$JAVA_HOME/bin/java" -jar "$DEVECO/Contents/sdk/default/openharmony/toolchains/lib/app_packing_tool.jar" \
+      --mode app --pack-info-path /tmp/pack.info --hap-path "$SIGNED" --out-path "$APP_OUT" \
+      && echo "✅ 已打包 .app：$APP_OUT"
+  fi
 fi
 
 echo ""
