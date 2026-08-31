@@ -36,9 +36,8 @@ BP="$PROJECT/build-profile.json5"
 CFG_ETS="$PROJECT/entry/src/main/ets/service/Config.ets"
 SIGNING="$PROJECT/signing.local.json5"
 
-# 构建结束后恢复所有注入（Key 占位符、build-profile 原样）
+# 构建结束后恢复 Key 占位符
 restoreAll() {
-  [ -f "$BP.bak" ] && mv "$BP.bak" "$BP"
   if [ -n "$KEY" ]; then
     sed -i '' "s|'$KEY'|'YOUR_API_KEY_HERE'|" "$CFG_ETS" 2>/dev/null || true
   fi
@@ -51,25 +50,39 @@ if [ -n "$KEY" ]; then
   echo "✅ 已注入内置 API Key（${KEY:0:6}…）"
 fi
 
-# 2) 注入本机签名配置（signing.local.json5 已 gitignore，不进入仓库）
-if [ -f "$SIGNING" ]; then
-  python3 - "$BP" "$SIGNING" <<'PYEOF'
-import json, shutil, sys
-bp, sp = sys.argv[1], sys.argv[2]
-shutil.copy(bp, bp + '.bak')
-cfg = json.load(open(bp, encoding='utf-8'))
-sign = json.load(open(sp, encoding='utf-8'))
-cfg['app']['signingConfigs'] = sign.get('signingConfigs', [])
-for p in cfg['app'].get('products', []):
-    p['signingConfig'] = 'default'
-json.dump(cfg, open(bp, 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
-print('✅ 已注入本机签名配置')
-PYEOF
-fi
-
-# 3) 构建
+# 2) 构建（不注入签名：hvigor 的 SignHap 只认 DevEco 加密密码，签名改用官方 hap-sign-tool 手动完成）
 "$DEVECO/Contents/tools/node/bin/node" "$DEVECO/Contents/tools/hvigor/bin/hvigorw.js" \
   --mode module -p product=default -p buildMode="$MODE" assembleHap --no-daemon
+
+# 3) 用官方 hap-sign-tool 对未签名包手动签名（支持明文密码）
+if [ -f "$SIGNING" ]; then
+  UNSIGNED=$(ls -t "$PROJECT/entry/build/default/outputs/default/"*.hap 2>/dev/null | head -1)
+  SIGNED="$PROJECT/entry/build/default/outputs/default/entry-default-signed.hap"
+  python3 - "$SIGNING" <<'PYEOF' > /tmp/sign_params.env
+import json, sys
+m = json.load(open(sys.argv[1], encoding='utf-8'))['signingConfigs'][0]['material']
+for k in ('storeFile','storePassword','keyAlias','keyPassword','signAlg','profile','certpath'):
+    v = m.get(k, '')
+    print(k.upper() + '=' + v.replace(' ', '\\ '))
+PYEOF
+  if [ -f "$UNSIGNED" ]; then
+    . /tmp/sign_params.env
+    "$JAVA_HOME/bin/java" -jar "$DEVECO/Contents/sdk/default/openharmony/toolchains/lib/hap-sign-tool.jar" sign-app \
+      -mode localSign \
+      -keyAlias "$KEYALIAS" \
+      -keyPwd "$KEYPASSWORD" \
+      -keystoreFile "$STOREFILE" \
+      -keystorePwd "$STOREPASSWORD" \
+      -appCertFile "$CERTPATH" \
+      -profileFile "$PROFILE" \
+      -profileSigned 1 \
+      -signAlg "$SIGNALG" \
+      -inFile "$UNSIGNED" \
+      -compatibleVersion 12 \
+      -outFile "$SIGNED" \
+      && echo "✅ 已签名：$SIGNED"
+  fi
+fi
 
 echo ""
 echo "✅ 构建完成 [mode=$MODE]。产物位于："
