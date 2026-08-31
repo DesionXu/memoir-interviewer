@@ -24,13 +24,19 @@
 
 ## 三、生成签名证书与 Profile
 
+> 关键：**发布（release）类型的签名不需要绑定设备**。之前报"缺乏设备无法新建 profile"是因为走了调试（debug）类型——调试签名才需要设备 UDID。上架用的是 release 签名。
+
 1. DevEco Studio 打开工程
 2. **File → Project Structure → Signing Configs**
-3. 勾选 **Automatically generate signature**
-4. 登录华为账号，按提示完成：
-   - 选择刚创建的 AGC 项目/应用
-   - 自动生成 `.p12` 密钥库、`.cer` 证书、`.p7b` Profile（Profile 里会绑定包名与测试设备）
-5. 完成后 `build-profile.json5` 的 `signingConfigs` 会自动填充
+3. 勾选 **Automatically generate signature**，登录华为账号
+4. 在自动签名弹窗里，如果可以选择 profile 类型：选 **Release（发布）**
+   - 若弹窗要求选择 AGC 项目/应用：选择"回忆录访谈员"项目下的 com.dowson.memoir 应用
+   - 若仍要求"添加设备"：说明选到了 Debug 类型，返回改选 Release
+5. 完成后 `.p12`/`.cer`/`.p7b` 写入 `build-profile.json5` 的 `signingConfigs`
+6. **Build → Build App(s)/Hap(s) → release** → 产物 `entry/build/default/outputs/default/*-signed.hap` 或 `.app` 文件
+
+> 若自动签名始终无法生成 release 证书，备选流程：
+> DevEco → Build → Generate Key and CSR → 生成证书请求 → 去 AGC → 用户与访问 → 证书管理 → 上传 CSR → 下载发布证书 → 回 DevEco 配置。卡住发截图。
 
 ## 四、真机调试（可选）
 
