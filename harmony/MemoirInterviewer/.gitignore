@@ -1,6 +1,8 @@
 /node_modules
 /oh_modules
 /local.properties
+/signing.local.json5
+/keys
 /.idea
 **/build
 /.hvigor
