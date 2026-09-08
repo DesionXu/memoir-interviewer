@@ -1,0 +1,7 @@
+{
+  "name": "chatProxy",
+  "version": "1.0.0",
+  "description": "DeepSeek 代理云函数（Key 存云端环境变量）",
+  "main": "index.js",
+  "dependencies": {}
+}

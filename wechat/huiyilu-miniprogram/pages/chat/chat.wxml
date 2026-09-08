@@ -1,0 +1,98 @@
+<view class="app">
+  <!-- 头部（固定） -->
+  <view class="header">
+    <view class="back" bindtap="goBack">‹</view>
+    <view class="title">📖 回忆录访谈员</view>
+    <view class="badge" wx:if="{{modeBadge}}">{{modeBadge}}</view>
+    <view class="icon-btn" bindtap="openSettings">⚙️</view>
+  </view>
+
+  <!-- 对话框（唯一滚动区） -->
+  <scroll-view class="chat-box" scroll-y scroll-into-view="{{scrollInto}}" scroll-with-animation enhanced>
+    <view wx:for="{{messages}}" wx:key="index" class="message {{item.role}}">
+      <image wx:if="{{item.photo}}" class="photo-attach" src="{{item.photo}}" mode="widthFix"></image>
+      <text wx:if="{{item.content}}" user-select>{{item.content}}</text>
+    </view>
+    <view id="msg-bottom"></view>
+  </scroll-view>
+
+  <!-- 底部输入区（固定） -->
+  <view class="composer">
+    <view class="status">{{status}}</view>
+    <view class="input-row">
+      <textarea
+        class="input"
+        value="{{inputText}}"
+        bindinput="onInput"
+        placeholder="点 🎤 说话，或在这里打字…"
+        maxlength="-1"
+        auto-height
+        cursor-spacing="20"
+      ></textarea>
+      <view class="round-btn" bindtap="choosePhoto">📷</view>
+      <view class="round-btn {{listening ? 'listening' : ''}}" bindtap="toggleMic">{{listening ? '🔴' : '🎤'}}</view>
+      <button class="send-btn" bindtap="sendMessage" disabled="{{sending}}">发 送</button>
+    </view>
+    <button class="btn-generate" bindtap="generateMemoir" disabled="{{generating}}">📝 生成我的回忆录</button>
+  </view>
+
+  <!-- 设置面板 -->
+  <view class="mask" wx:if="{{settingsOpen}}" bindtap="closeSettings"></view>
+  <view class="sheet {{settingsOpen ? 'open' : ''}}">
+    <view class="sheet-head">
+      <text class="sheet-title">⚙️ 设置</text>
+      <view class="sheet-close" bindtap="closeSettings">✕</view>
+    </view>
+    <view class="setting-row">
+      <text class="s-label">🎤 语音输入</text>
+      <switch checked="{{voiceInputOn}}" color="#6f9c52" bindchange="onVoiceInputToggle"></switch>
+    </view>
+    <view class="setting-row">
+      <text class="s-label">🎙️ 方言</text>
+      <picker mode="selector" range="{{dialects}}" value="{{dialectIndex}}" bindchange="onDialectChange">
+        <view class="dialect">{{dialects[dialectIndex]}}</view>
+      </picker>
+    </view>
+    <view class="dialect-note">说明：语音识别目前按普通话工作；方言朗读能力二期接入。</view>
+    <button class="sheet-done" bindtap="closeSettings">完 成</button>
+  </view>
+
+  <!-- 回忆录面板 -->
+  <view class="mask" wx:if="{{memoirOpen}}" bindtap="closeMemoir"></view>
+  <view class="sheet memoir-sheet {{memoirOpen ? 'open' : ''}}">
+    <view class="sheet-head">
+      <text class="sheet-title">📖 我的回忆录</text>
+      <text class="sheet-hint">听一听 · 改一改 · 交给家人</text>
+      <view class="sheet-close" bindtap="closeMemoir">✕</view>
+    </view>
+
+    <!-- 预览（无限滚动） -->
+    <scroll-view class="memoir-body" scroll-y wx:if="{{!editing}}">
+      <view class="memoir-title" wx:if="{{memoirTitle}}">{{memoirTitle}}</view>
+      <block wx:for="{{memoirBlocks}}" wx:key="index">
+        <view wx:if="{{item.type === 'kai'}}" class="kai">{{item.text}}</view>
+        <view wx:elif="{{item.type === 'tocStart'}}" class="toc">
+          <block wx:for="{{memoirBlocks}}" wx:for-item="tb" wx:key="tbIndex">
+            <view wx:if="{{tb.type === 'toc'}}" class="toc-line">{{tb.text}}</view>
+          </block>
+        </view>
+        <view wx:elif="{{item.type === 'chap'}}" class="chap-title">{{item.text}}</view>
+        <view wx:elif="{{item.type === 'para'}}" class="para">
+          <block wx:for="{{item.segs}}" wx:for-item="seg" wx:key="segIndex">
+            <image wx:if="{{seg.type === 'photo'}}" class="photo-inline" src="{{seg.photo}}" mode="widthFix"></image>
+            <text wx:else>{{seg.text}}</text>
+          </block>
+        </view>
+      </block>
+    </scroll-view>
+
+    <!-- 编辑模式 -->
+    <textarea class="memoir-edit" wx:else value="{{memoirRaw}}" bindinput="onMemoirInput" maxlength="-1"></textarea>
+
+    <view class="memoir-actions">
+      <button class="act-btn act-edit" bindtap="toggleEdit">{{editing ? '👁 预览' : '✏️ 修改'}}</button>
+      <button class="act-btn act-confirm" bindtap="confirmMemoir">{{confirmed ? '✅ 已定稿' : '✅ 我确认'}}</button>
+      <button class="act-btn act-download" bindtap="downloadMemoir">💾 下载</button>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,15 @@
+<view class="welcome">
+  <view class="emblem">📖</view>
+  <view class="title">回忆录访谈员</view>
+  <view class="tagline">把一生的故事，讲给后人听</view>
+
+  <button class="btn-start" bindtap="goSelf">开始讲述</button>
+  <button class="btn-child" bindtap="goChild">为父母发起（子女）</button>
+  <view class="who-hint">您是自己想写，还是替父母发起？</view>
+
+  <view class="features">
+    <text class="feature">🎤 开口即聊</text>
+    <text class="feature">🔊 温柔朗读</text>
+    <text class="feature">📷 老照片回忆</text>
+  </view>
+</view>

@@ -18,3 +18,8 @@ build/
 # 私密配置（API Key 等，请勿提交）
 config.js
 .env
+
+# 面试交付物与个人材料（仅本地保存，不公开）
+huiyilu/
+AI实战战前弹药包/
+int_to_roman.py
