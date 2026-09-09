@@ -10,6 +10,7 @@
     "backgroundColor": "#faf3e7"
   },
   "cloud": true,
+  "lazyCodeLoading": "requiredComponents",
   "plugins": {
     "WechatSI": {
       "version": "0.3.5",
