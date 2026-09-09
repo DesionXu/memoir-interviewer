@@ -365,8 +365,8 @@ Page({
     ];
     try {
       let memoirText = '';
-      for (let round = 0; round < 5; round++) {
-        const data = await this.callDeepSeek(memoirMessages, 8192, 0.7);
+      for (let round = 0; round < 8; round++) {
+        const data = await this.callDeepSeek(memoirMessages, 2048, 0.7);
         const choice = data.choices[0];
         const chunk = (choice.message.content || '').trim();
         memoirText += chunk;

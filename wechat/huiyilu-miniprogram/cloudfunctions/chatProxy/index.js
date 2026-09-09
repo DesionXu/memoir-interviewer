@@ -39,7 +39,7 @@ exports.main = async (event) => {
         'Authorization': 'Bearer ' + API_KEY,
         'Content-Length': Buffer.byteLength(payload)
       },
-      timeout: 300000
+      timeout: 55000
     }, (res) => {
       let body = '';
       res.on('data', (c) => { body += c; });
@@ -58,7 +58,7 @@ exports.main = async (event) => {
     });
     req.on('timeout', () => {
       req.destroy();
-      resolve({ error: '请求超时（生成回忆录较长时属正常，请重试）' });
+      resolve({ error: '请求超时（内容较长，请重试一次）' });
     });
     req.on('error', (e) => {
       resolve({ error: e.message });
