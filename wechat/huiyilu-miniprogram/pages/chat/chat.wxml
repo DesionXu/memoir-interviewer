@@ -12,6 +12,7 @@
     <view wx:for="{{messages}}" wx:key="index" class="message {{item.role}}">
       <image wx:if="{{item.photo}}" class="photo-attach" src="{{item.photo}}" mode="widthFix"></image>
       <text wx:if="{{item.content}}" user-select>{{item.content}}</text>
+      <text wx:if="{{item.role === 'ai'}}" class="ai-note">内容由 AI 生成，仅供参考</text>
     </view>
     <view id="msg-bottom"></view>
   </scroll-view>
@@ -65,6 +66,7 @@
       <text class="sheet-hint">听一听 · 改一改 · 交给家人</text>
       <view class="sheet-close" bindtap="closeMemoir">✕</view>
     </view>
+    <view class="memoir-ai-note">本回忆录由 AI 根据您的讲述整理生成，可修改后确认定稿</view>
 
     <!-- 预览（无限滚动） -->
     <scroll-view class="memoir-body" scroll-y wx:if="{{!editing}}">

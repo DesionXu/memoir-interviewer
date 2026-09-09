@@ -275,3 +275,6 @@
 .act-edit { background: #f3ede4; color: #4a3a2c; border: 3rpx solid #d9cdbb; }
 .act-confirm { background: #f3ede4; color: #4a3a2c; border: 3rpx solid #6f9c52; }
 .act-download { background: #6f9c52; color: #fff; }
+
+.ai-note { display: block; margin-top: 8rpx; font-size: 20rpx; color: #b0a094; }
+.memoir-ai-note { padding: 16rpx 30rpx 4rpx; font-size: 22rpx; color: #b0a094; text-align: center; }
