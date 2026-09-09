@@ -54,7 +54,7 @@
         <view class="dialect">{{dialects[dialectIndex]}}</view>
       </picker>
     </view>
-    <view class="dialect-note">说明：语音识别目前按普通话工作；方言朗读能力二期接入。</view>
+    <view class="dialect-note">说明：语音识别支持普通话与粤语；台湾国语按普通话识别，其余方言二期接入。</view>
     <button class="sheet-done" bindtap="closeSettings">完 成</button>
   </view>
 

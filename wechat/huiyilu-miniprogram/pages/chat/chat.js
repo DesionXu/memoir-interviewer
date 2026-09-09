@@ -320,7 +320,9 @@ Page({
     this.asrStopToSend = false;
     this.setData({ listening: true, status: '🎤 正在听您说话… 说完了请再点一下红色按钮' });
     try {
-      this.asrManager.start({ lang: 'zh_CN', duration: 60000 });
+      // 插件 0.3.10：普通话 zh_CN、粤语 zh_HK；台湾国语按普通话识别
+      const langMap = ['zh_CN', 'zh_HK', 'zh_CN'];
+      this.asrManager.start({ lang: langMap[this.data.dialectIndex] || 'zh_CN', duration: 60000 });
     } catch (e) {
       this.setData({ listening: false, status: '⚠️ 语音启动失败' });
     }
