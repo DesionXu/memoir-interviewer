@@ -14,9 +14,9 @@
 
 ## 二、运行前准备（一次性，约 20 分钟）
 
-1. **注册小程序账号**：https://mp.weixin.qq.com/ 注册（个人主体即可），拿到 **AppID**
+1. **注册小程序账号**：https://mp.weixin.qq.com/ 注册（个人主体即可），拿到 **AppID**（本项目 `project.config.json` 已填入 AppID：`wxb5c70ce6f1f46ec0`，若用其他账号直接替换）
 2. **安装微信开发者工具**：https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html（Mac 版）
-3. 用开发者工具打开本项目目录，把 `project.config.json` 里的 `touristappid` 替换为你的 AppID
+3. 用开发者工具打开本项目目录（AppID 已配置好，直接导入即可）
 4. **添加同声传译插件**（语音输入用，免费）：
    - mp 后台 → 设置 → 第三方设置 → 插件管理 → 搜索添加「**微信同声传译**」（provider：wx069ba97219f66d99）
 5. **开通云开发**：开发者工具 → 云开发 → 开通（免费额度即可）→ 记录**环境 ID**
