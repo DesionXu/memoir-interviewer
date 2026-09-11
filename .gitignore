@@ -23,3 +23,9 @@ config.js
 huiyilu/
 AI实战战前弹药包/
 int_to_roman.py
+
+# 本地工具与调试依赖
+.tools/
+
+# 微信开发者工具私有配置
+project.private.config.json
