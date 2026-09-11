@@ -1,12 +1,16 @@
 import { AbilityConstant, UIAbility, Want } from '@kit.AbilityKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
+import { AnalyticsService } from '../service/AnalyticsService';
 
 const DOMAIN: number = 0x0000;
 
 export default class EntryAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     hilog.info(DOMAIN, 'Memoir', 'Ability onCreate');
+    AnalyticsService.init(this.context).then(() => {
+      AnalyticsService.track('launch');   // PRD-03 L1：应用启动
+    });
   }
 
   onWindowStageCreate(windowStage: window.WindowStage): void {

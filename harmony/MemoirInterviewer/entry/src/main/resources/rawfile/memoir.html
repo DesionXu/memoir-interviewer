@@ -24,7 +24,7 @@
             background: #fffdfa;
         }
 
-        /* ===== 顶部：只有标题和一个设置按钮 ===== */
+        /* ===== 顶部 ===== */
         .app-header {
             display: flex;
             align-items: center;
@@ -44,6 +44,14 @@
             font-weight: 600;
             color: #43332a;
         }
+        .mode-badge {
+            font-size: 14px;
+            color: #b07a62;
+            background: #f7e9e0;
+            border-radius: 999px;
+            padding: 4px 12px;
+            flex-shrink: 0;
+        }
         .icon-btn {
             margin-left: auto;
             background: #f3ede4;
@@ -55,6 +63,41 @@
             cursor: pointer;
         }
         .icon-btn:active { background: #e9e0d3; }
+
+        /* ===== 子女代发起提示条（PRD-02：子女不代答） ===== */
+        .child-hint {
+            display: none;
+            background: #fdf3ec;
+            color: #8a5a44;
+            font-size: 15px;
+            text-align: center;
+            padding: 8px 14px;
+            border-bottom: 1px solid #f3e3d5;
+        }
+        .child-hint.show { display: block; }
+
+        /* ===== 续接横幅（可中断可续接） ===== */
+        .resume-banner {
+            display: none;
+            background: #f5f0e6;
+            border-bottom: 1px solid #eadfce;
+            padding: 14px 18px;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .resume-banner.show { display: flex; }
+        .resume-text { font-size: 17px; color: #5a4a3a; line-height: 1.5; }
+        .resume-btns { display: flex; gap: 12px; }
+        .resume-btns button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 999px;
+            font-size: 19px;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-resume { background: #7c6a58; color: #fff; }
+        .btn-restart { background: #fff; color: #5a4a3a; border: 2px solid #d9cdbb !important; }
 
         /* ===== 对话框：唯一滚动的区域 ===== */
         .chat-box {
@@ -88,6 +131,18 @@
             align-self: flex-end;
             border-bottom-right-radius: 8px;
         }
+        .message img.msg-photo {
+            display: block;
+            max-width: 260px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+        .ai-note {
+            display: block;
+            margin-top: 8px;
+            font-size: 14px;
+            color: #b0a094;
+        }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
         /* ===== 底部输入区 ===== */
@@ -103,6 +158,32 @@
             padding: 2px 0 8px;
             min-height: 30px;
             line-height: 1.4;
+        }
+        .pending-photo {
+            display: none;
+            position: relative;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+        .pending-photo.show { display: block; }
+        .pending-photo img {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 12px;
+            border: 2px solid #e0d5c6;
+        }
+        .pending-photo .remove-photo {
+            position: absolute;
+            top: -8px;
+            left: 188px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: #c0392b;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
         }
         .input-row {
             display: flex;
@@ -124,6 +205,20 @@
             transition: border 0.2s;
         }
         .input-row textarea:focus { border-color: #8a7a6a; background: #fff; }
+        .photo-btn {
+            width: 64px;
+            border-radius: 50%;
+            background: #f3ede4;
+            color: #5a4a3a;
+            border: 2px solid #e0d5c6;
+            font-size: 26px;
+            cursor: pointer;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .photo-btn:active { background: #e9e0d3; }
         .mic-btn {
             width: 64px;
             border-radius: 50%;
@@ -272,9 +367,26 @@
 
         /* 回忆录面板内容 */
         .memoir-head .hint { font-size: 16px; color: #b0a094; }
+        .memoir-ai-note {
+            font-size: 15px;
+            color: #b0a094;
+            text-align: center;
+            padding: 4px 0 10px;
+        }
+        .coverage-note {
+            display: none;
+            font-size: 17px;
+            line-height: 1.6;
+            color: #5a4a3a;
+            background: #f7f1e4;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+        }
+        .coverage-note.show { display: block; }
         .memory-book {
             flex: 1;
-            min-height: 320px;
+            min-height: 240px;
             width: 100%;
             padding: 16px;
             border: 2px solid #e0d5c6;
@@ -287,18 +399,23 @@
             outline: none;
             background: #fcf8f0;
         }
-        .btn-download {
+        .memoir-actions {
+            display: flex;
+            gap: 12px;
             margin-top: 14px;
-            width: 100%;
-            padding: 16px;
-            background: #6f9c52;
+        }
+        .memoir-actions button {
+            flex: 1;
+            padding: 15px 8px;
             border: none;
             border-radius: 999px;
-            color: #fff;
-            font-size: 21px;
+            font-size: 19px;
             cursor: pointer;
         }
-        .btn-download:active { background: #5f8a46; }
+        .act-read { background: #8a7a6a; color: #fff; }
+        .act-confirm { background: #f3ede4; color: #4a3a2c; border: 3px solid #6f9c52 !important; }
+        .act-confirm.confirmed { background: #6f9c52; color: #fff; }
+        .act-download { background: #6f9c52; color: #fff; }
     </style>
 </head>
 <body>
@@ -306,22 +423,41 @@
     <header class="app-header">
         <a class="back-link" href="index.html" onclick="if (window.HarmonyBridge && window.HarmonyBridge.goHome) { window.HarmonyBridge.goHome(); return false; }">‹</a>
         <h1>📖 回忆录访谈员</h1>
+        <span class="mode-badge" id="modeBadge" style="display:none"></span>
         <button class="icon-btn" id="settingsBtn">⚙️ 设置</button>
     </header>
 
+    <!-- 子女代发起：不代答提示 -->
+    <div class="child-hint" id="childHint">❤️ 子女代发起：请让老人自己说，子女不代答——讲的是谁，话就是谁的</div>
+
+    <!-- 续接横幅 -->
+    <div class="resume-banner" id="resumeBanner">
+        <div class="resume-text" id="resumeText"></div>
+        <div class="resume-btns">
+            <button class="btn-resume" id="resumeBtn">继续上次访谈</button>
+            <button class="btn-restart" id="restartBtn">重新开始</button>
+        </div>
+    </div>
+
     <div class="chat-box" id="chatBox">
-        <div class="message ai">您好呀，我是您的回忆录访谈员。可以跟我聊聊您小时候住的地方吗？</div>
+        <div class="message ai">您好呀，我是您的回忆录访谈员。可以跟我聊聊您小时候住的地方吗？<span class="ai-note">内容由 AI 生成，仅供参考</span></div>
     </div>
 
     <div class="composer">
         <div class="status" id="status">💡 点 🎤 说话，说完再点一下就会发送</div>
+        <div class="pending-photo" id="pendingPhotoWrap">
+            <img id="pendingPhotoImg" alt="待发送照片">
+            <button class="remove-photo" id="removePhotoBtn" title="移除照片">✕</button>
+        </div>
         <div class="input-row">
             <textarea id="userInput" rows="2" placeholder="点 🎤 说话，或在这里打字…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
+            <button class="photo-btn" id="photoBtn" title="发一张老照片，聊聊照片里的故事">📷</button>
             <button class="mic-btn" id="micBtn" title="点一下开始说话，说完了再点一下发送">🎤</button>
             <button id="sendBtn" onclick="sendMessage()">发 送</button>
         </div>
         <button class="btn-generate" id="generateBtn" onclick="generateMemoir()">📝 生成回忆录</button>
     </div>
+    <input type="file" id="fileInput" accept="image/*" style="display:none">
 </div>
 
 <!-- 设置面板 -->
@@ -364,24 +500,89 @@
     <div class="sheet-panel">
         <div class="sheet-head memoir-head">
             <span class="title">📖 您的回忆录</span>
-            <span class="hint">可直接修改</span>
+            <span class="hint">听一听 · 改一改 · 确认定稿</span>
             <button class="sheet-close" id="memoirCloseBtn" title="关闭">✕</button>
         </div>
+        <div class="memoir-ai-note">本回忆录由 AI 根据您的讲述整理生成，可修改后确认定稿</div>
+        <div class="coverage-note" id="coverageNote"></div>
         <textarea class="memory-book" id="memoryBook" placeholder="点「生成回忆录」按钮，让 AI 把您的故事整理成回忆录…"></textarea>
-        <button class="btn-download" id="downloadBtn" onclick="downloadMemoir()">💾 下载保存（txt 文件）</button>
+        <div class="memoir-actions">
+            <button class="act-read" id="readAloudBtn" onclick="readAloudMemoir()">🔊 朗读全文</button>
+            <button class="act-confirm" id="confirmBtn" onclick="confirmMemoir()">✅ 我确认</button>
+            <button class="act-download" id="downloadBtn" onclick="downloadMemoir()">💾 下载</button>
+        </div>
     </div>
 </div>
 
 <script src="config.js"></script>
 <script>
+// ==================================================================
+// 回忆录访谈员 · 访谈页（与 PRD-01 / PRD-02 V1.1 / PRD-03 对齐）
+// 双模式（本人讲述 / 子女代发起）、受托开场、意愿先行、一次一问、
+// 顺藤摸瓜、徘徊只问不判、转场预告下次话题、可中断可续接（进度复述）、
+// 老照片读图、第一人称零添加成稿、五阶段完整性检查、老人点头定稿、
+// 朗读全文、下载、L1-L6 轻量埋点。
+// ==================================================================
+
+// ===== 提示词（与微信小程序版一致） =====
+const SYSTEM_PROMPT_SELF = `你是一位耐心、温和的"回忆录访谈员"，陪伴一位长辈口述他的人生故事，最终整理成一本第一人称的回忆录，留给他的家人后代。
+
+核心原则：
+1. 一次只问一个开放式问题，语气亲切、口语化，像家人聊天。全篇只能出现一个问句；不要使用"一定很……吧？"这类修辞问句（老人听朗读时会分不清）。
+2. 顺着老人提到的人、事、物追问细节（顺藤摸瓜），不打断、不评判、不纠正。
+3. 老人对往事犹豫不定时（如"也不知道当时该不该"），你绝不下结论、不代答；只问"当时您是怎么想的？""后来您是怎么拿定主意的？"，鼓励老人自己理清、自己判断。
+4. 老人上传老照片时，请他讲讲照片里的人和事。
+5. 回复简短（一般不超过三句话），适合朗读给老人听。
+6. 当老人表示要休息或一个话题讲完时，收尾并用一句话预告下次话题（如"下回咱们接着讲进城的事"），让老人有期待。`;
+
+const SYSTEM_PROMPT_CHILD = `你是一位耐心、温和的"回忆录访谈员"，陪伴一位长辈口述他的人生故事，最终整理成一本第一人称的回忆录。
+
+【本次访谈的背景】是老人的孩子为老人发起的，目的是给孙子孙女留下一本老人的故事。开场时你必须如实说明这一点——不假装是老人自己想写。
+
+核心原则：
+1. 先征求意愿：开场说明来意后，先问老人愿不愿意聊。老人愿意再继续；老人犹豫时只问不劝（如"您要是不想讲，咱们就不讲，没关系"）；老人明确拒绝，就尊重并停止，绝不纠缠。
+2. 一次只问一个开放式问题，语气亲切、口语化，像家人聊天。全篇只能出现一个问句；不要使用"一定很……吧？"这类修辞问句（老人听朗读时会分不清）。
+3. 顺着老人提到的人、事、物追问细节（顺藤摸瓜），不打断、不评判、不纠正。
+4. 老人对往事犹豫不定时（包括"要不要继续讲"这件事本身），你绝不下结论、不代答；只问"当时您是怎么想的？""您自己是怎么拿定主意的？"，鼓励老人自己理清、自己判断。
+5. 老人上传老照片时，请他讲讲照片里的人和事。
+6. 回复简短（一般不超过三句话），适合朗读给老人听。
+7. 当老人表示要休息或一个话题讲完时，收尾并用一句话预告下次话题，让老人有期待。`;
+
+const GREETING_SELF = '您好呀，我是您的回忆录访谈员。可以跟我聊聊您小时候住的地方吗？';
+const GREETING_CHILD = '您好呀。我是回忆录访谈员，您的孩子托我来听您讲故事——想给孙子孙女留一本您的故事。您愿意跟我聊聊吗？';
+
+const MEMOIR_SYSTEM_PROMPT = `你是一位回忆录整理者，把访谈对话素材整理成一本第一人称的回忆录。这是老人留给家人的心里话。
+
+【最高铁律：绝对忠实于素材】
+1. 你只能使用访谈素材中真实出现的内容：老人的原话、老人明确提到的事实。
+2. 素材中没有的细节，一律不得添加。禁止：补写对话、补充场景与环境描写、展开心理活动、添加比喻或评语、为行文连贯编造过渡句、补充年代背景。
+3. 素材里只有一句话，这一章就只有这一句话，绝不扩写。
+4. 你可以做的只有三件事：把老人的原话按时间顺序组装；删去"嗯、啊"等明显冗余；保持第一人称"我"。
+5. 宁可章节短，不可多一字虚构。短不是缺点，编才是错误。
+
+写作要求：
+1. 通篇第一人称"我"，像老人本人在讲述。
+2. 尽量直接引用老人的原话与口语，不做文学化改写。
+3. 老人犹豫徘徊之处，只如实呈现素材中老人自己说过的话与他自己给出的结论；素材里没有的心理过程，一律不补。
+4. 结构依次为（以下四个标记必须原样输出）：
+   ① 标题：只用素材中出现过的事物或原话拟一个朴实的标题。
+   ② 【开篇】：固定写这一句——"我把这辈子记得的事，讲给家里人听。"（不要写别的）
+   ③ 【目录】：按时间顺序列出各章，每行一章，格式如"第一章 童年的大槐树"。
+   ④ 【正文】：按时间线分章展开，每章以"第X章 章名"开头，再写若干段落；段落内容全部来自素材。
+5. 照片：素材中提到照片处标注【照片N】（N 从 1 开始），不编造照片内容。
+6. 完整性优先：素材中提到的各个时期都要覆盖，不省略、不草草收尾。
+7. 只输出纯文本，不要使用任何 Markdown 符号，不要写页码。`;
+
+const COVERAGE_PROMPT = `你是回忆录主线检查员。访谈素材应覆盖老人五个必经人生阶段：童年、离家、成家、育子、晚年。
+只根据下方素材判断每个阶段是否已有内容，输出一行，格式：
+已讲：童年、成家；还没讲：离家、育子、晚年。
+素材里完全没有的内容不得推断为已讲。`;
+
 // ===== 配置区 =====
-// 公网部署时走同源后端代理（server.js），API Key 只保存在服务器上；
-// 本地双击打开时回退为浏览器直连，需要同目录下的 config.js 提供 Key。
 const DEEPSEEK_API_KEY = window.DEEPSEEK_API_KEY || 'YOUR_API_KEY_HERE';
 const API_URL = 'https://api.deepseek.com/v1/chat/completions';
 
 // 调用 DeepSeek：鸿蒙原生桥接 > 同源代理 /api/chat > 浏览器直连
-// 附带保护：v4-pro 是推理模型，token 预算全花在思考上时正文可能为空，自动加倍预算重试一次
 async function callDeepSeek(messages, maxTokens, temperature) {
     let attemptTokens = maxTokens;
     let attemptMessages = messages;
@@ -393,15 +594,12 @@ async function callDeepSeek(messages, maxTokens, temperature) {
         if (content.trim() || finishReason !== 'length' || attempt === 1) {
             return data;
         }
-        // 正文为空且因长度截断：加倍预算重试一次
         attemptTokens = Math.min(attemptTokens * 2, 8192);
         attemptMessages = attemptMessages.concat([{ role: 'user', content: '请直接给出回答正文。' }]);
     }
 }
 
 async function requestDeepSeek(messages, maxTokens, temperature) {
-    // 0) 鸿蒙原生桥接（运行在鸿蒙应用内时，由原生层发起请求并保管 Key）
-    // 原生层是异步的：通过回调 ID + window.__bridgeResolve/Reject 返回结果
     if (window.HarmonyBridge && typeof window.HarmonyBridge.chat === 'function') {
         return new Promise((resolve, reject) => {
             const cbId = 'cb_' + Date.now() + '_' + Math.floor(Math.random() * 1000000);
@@ -410,7 +608,6 @@ async function requestDeepSeek(messages, maxTokens, temperature) {
             window.HarmonyBridge.chat(JSON.stringify(messages), maxTokens, temperature, cbId);
         });
     }
-    // 1) 尝试同源后端代理
     try {
         const proxyRes = await fetch('/api/chat', {
             method: 'POST',
@@ -428,13 +625,10 @@ async function requestDeepSeek(messages, maxTokens, temperature) {
             }
             return proxyRes.json();
         }
-        // 404/405 = 没有代理，回退直连
     } catch (e) {
-        if (!(e instanceof TypeError)) throw e;   // 代理存在但出错：直接显示错误
-        // TypeError = 网络不通（如本地 file:// 打开）：回退直连
+        if (!(e instanceof TypeError)) throw e;
     }
 
-    // 2) 浏览器直连 DeepSeek（仅适合本地自用；公网部署请勿携带 config.js）
     const directRes = await fetch(API_URL, {
         method: 'POST',
         headers: {
@@ -460,7 +654,7 @@ async function requestDeepSeek(messages, maxTokens, temperature) {
     return directRes.json();
 }
 
-// ===== 鸿蒙原生桥接回调（原生层通过 runJavaScript 触发） =====
+// ===== 鸿蒙原生桥接回调 =====
 window.__bridgeCbs = {};
 window.__bridgeResolve = function (id, rawJson) {
     const c = window.__bridgeCbs[id];
@@ -470,7 +664,20 @@ window.__bridgeReject = function (id, msg) {
     const c = window.__bridgeCbs[id];
     if (c) { delete window.__bridgeCbs[id]; c.reject(new Error(msg)); }
 };
-// 原生语音识别结果：实时写入输入框（listening/baseText/finalTranscript 为全局变量）
+window.__bridgeMode = function (id, modeJson) {
+    const c = window.__bridgeCbs[id];
+    if (c) { delete window.__bridgeCbs[id]; c.resolve(modeJson); }
+};
+window.__bridgeState = function (id, json) {
+    const c = window.__bridgeCbs[id];
+    if (c) { delete window.__bridgeCbs[id]; c.resolve(json); }
+};
+window.__bridgeOnPhoto = function (dataUrl) {
+    setPendingPhoto(dataUrl);
+};
+window.__bridgeOnPhotoError = function (msg) {
+    statusEl.textContent = '⚠️ ' + msg;
+};
 window.__bridgeOnAsr = function (finalText, interimText) {
     if (!listening) return;
     if (finalText) finalTranscript += finalText;
@@ -490,20 +697,19 @@ window.__bridgeOnAsrEnd = function () {
 };
 
 // ===== 状态 =====
+let mode = 'self';
 let conversation = [
-    { role: 'system', content: `你是一位耐心、温和、充满人文关怀的"回忆录访谈员"。你的使命是引导用户讲述人生故事。
-核心原则：
-1. 访谈优先：你的首要任务是提问和倾听，每次回复聚焦一个开放式问题。
-2. 共情鼓励：对用户的分享表达真诚的兴趣和共情。
-3. 一次一问：避免一次性抛出多个问题。
-4. 顺藤摸瓜：当用户提到有趣细节时，停下来追问。
-5. 口语化：回复要亲切、口语化、简短（一般不超过三句话），适合朗读给老人听。
-6. 以"记忆备份"和"陪伴倾听"为核心。
-开场白示例："您好呀，我是您的回忆录访谈员。可以跟我聊聊您小时候住的地方吗？"` },
-    { role: 'assistant', content: '您好呀，我是您的回忆录访谈员。可以跟我聊聊您小时候住的地方吗？' }
+    { role: 'system', content: SYSTEM_PROMPT_SELF },
+    { role: 'assistant', content: GREETING_SELF }
 ];
+let photos = [];            // 本会话已上传照片 dataUrl（仅内存，不落盘）
+let pendingPhoto = null;    // 待发送照片
+let roundCount = 0;
+let firstReplyTracked = false;
+let deepTracked = false;
+let userSentAlready = false;
 
-// ===== DOM引用 =====
+// ===== DOM 引用 =====
 const chatBox = document.getElementById('chatBox');
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
@@ -514,6 +720,11 @@ const downloadBtn = document.getElementById('downloadBtn');
 const memoirOverlay = document.getElementById('memoirOverlay');
 const memoirCloseBtn = document.getElementById('memoirCloseBtn');
 const micBtn = document.getElementById('micBtn');
+const photoBtn = document.getElementById('photoBtn');
+const fileInput = document.getElementById('fileInput');
+const pendingPhotoWrap = document.getElementById('pendingPhotoWrap');
+const pendingPhotoImg = document.getElementById('pendingPhotoImg');
+const removePhotoBtn = document.getElementById('removePhotoBtn');
 const voiceInputToggle = document.getElementById('voiceInputToggle');
 const voiceOutputToggle = document.getElementById('voiceOutputToggle');
 const voiceInputState = document.getElementById('voiceInputState');
@@ -523,8 +734,200 @@ const settingsSheet = document.getElementById('settingsSheet');
 const settingsBtn = document.getElementById('settingsBtn');
 const settingsCloseBtn = document.getElementById('settingsCloseBtn');
 const settingsDoneBtn = document.getElementById('settingsDoneBtn');
+const modeBadge = document.getElementById('modeBadge');
+const childHint = document.getElementById('childHint');
+const resumeBanner = document.getElementById('resumeBanner');
+const resumeText = document.getElementById('resumeText');
+const resumeBtn = document.getElementById('resumeBtn');
+const restartBtn = document.getElementById('restartBtn');
+const coverageNote = document.getElementById('coverageNote');
+const readAloudBtn = document.getElementById('readAloudBtn');
+const confirmBtn = document.getElementById('confirmBtn');
 
-// ===== 设置面板开关 =====
+// ===== 埋点（PRD-03 L1-L6 轻量埋点） =====
+function track(event, payload) {
+    try {
+        if (window.HarmonyBridge && typeof window.HarmonyBridge.track === 'function') {
+            window.HarmonyBridge.track(event, payload || '');
+            return;
+        }
+        let list = [];
+        try { list = JSON.parse(localStorage.getItem('hy_events') || '[]'); } catch (e) {}
+        list.push(new Date().toISOString() + '|' + event + (payload ? '|' + payload : ''));
+        localStorage.setItem('hy_events', JSON.stringify(list.slice(-500)));
+    } catch (e) {}
+}
+
+// ===== 消息文本工具（多模态消息） =====
+function msgText(m) {
+    if (typeof m.content === 'string') return m.content;
+    if (Array.isArray(m.content)) {
+        return m.content.filter(p => p.type === 'text').map(p => p.text || '').join('');
+    }
+    return '';
+}
+function msgPhoto(m) {
+    if (!Array.isArray(m.content)) return null;
+    const img = m.content.find(p => p.type === 'image_url' && p.image_url);
+    return img ? img.image_url.url : null;
+}
+function escapeHtml(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// ===== 渲染消息 =====
+function renderMessages() {
+    const msgs = conversation.filter(m => m.role !== 'system');
+    chatBox.innerHTML = msgs.map(m => {
+        if (m.role === 'assistant') {
+            return `<div class="message ai">${escapeHtml(msgText(m))}<span class="ai-note">内容由 AI 生成，仅供参考</span></div>`;
+        }
+        const photo = msgPhoto(m);
+        const photoHtml = photo ? `<img class="msg-photo" src="${photo}" alt="老照片">` : '';
+        return `<div class="message user">${photoHtml}${escapeHtml(msgText(m))}</div>`;
+    }).join('');
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// ===== 会话持久化（可中断可续接） =====
+function persistState() {
+    const saveable = conversation.filter(m => m.role !== 'system').map(m => ({
+        role: m.role,
+        content: msgText(m) || (msgPhoto(m) ? '（老照片）' : '')
+    }));
+    const json = JSON.stringify({ mode: mode, messages: saveable, roundCount: roundCount });
+    try {
+        if (window.HarmonyBridge && typeof window.HarmonyBridge.saveState === 'function') {
+            window.HarmonyBridge.saveState(json);
+            return;
+        }
+        localStorage.setItem('hy_state', json);
+    } catch (e) {}
+}
+
+function loadSavedState() {
+    return new Promise((resolve) => {
+        if (window.HarmonyBridge && typeof window.HarmonyBridge.loadState === 'function') {
+            const cbId = 'st_' + Date.now();
+            window.__bridgeCbs[cbId] = {
+                resolve: (json) => resolve(json || ''),
+                reject: () => resolve('')
+            };
+            window.HarmonyBridge.loadState(cbId);
+            return;
+        }
+        resolve(localStorage.getItem('hy_state') || '');
+    });
+}
+
+async function checkResume() {
+    let saved = null;
+    try {
+        const json = await loadSavedState();
+        if (json) saved = JSON.parse(json);
+    } catch (e) {}
+    if (saved && saved.messages && saved.messages.some(m => m.role === 'user')) {
+        resumeText.textContent = '📌 上次的访谈还在（本机保存，共 ' + saved.messages.length + ' 条对话）。' +
+            (saved.mode === 'child' ? '上次是孩子发起的访谈。' : '');
+        resumeBanner.classList.add('show');
+    }
+}
+
+resumeBtn.addEventListener('click', async () => {
+    let saved = null;
+    try {
+        const json = await loadSavedState();
+        if (json) saved = JSON.parse(json);
+    } catch (e) {}
+    if (!saved) return;
+    const savedMode = saved.mode === 'child' ? 'child' : 'self';
+    mode = savedMode;
+    roundCount = saved.roundCount || 0;
+    conversation = [
+        { role: 'system', content: savedMode === 'child' ? SYSTEM_PROMPT_CHILD : SYSTEM_PROMPT_SELF },
+        ...saved.messages.map(m => ({ role: m.role, content: m.content }))
+    ];
+    applyModeUI();
+    resumeBanner.classList.remove('show');
+    renderMessages();
+    track('session_continue', 'rounds=' + roundCount);
+    statusEl.textContent = '🤔 正在回想上次聊到哪儿了…';
+    // 进度复述：新会话开场先复述进度，再继续（PRD-02 采集期规则）
+    conversation.push({
+        role: 'user',
+        content: '【续接提示】新的会话开始了。请先用一两句话向老人复述我们上次聊到的进度（例如"上次您讲到……"），然后接着上次的话题继续访谈，并预告今天要聊的话题。'
+    });
+    try {
+        const data = await callDeepSeek(conversation, 1024, 0.8);
+        const reply = data.choices[0].message.content;
+        conversation.push({ role: 'assistant', content: reply });
+        renderMessages();
+        persistState();
+        statusEl.textContent = '💬 接着聊吧，我在听…';
+        speakText(reply);
+    } catch (error) {
+        statusEl.textContent = '❌ ' + error.message;
+        conversation.pop();
+        renderMessages();
+    }
+});
+
+restartBtn.addEventListener('click', () => {
+    try {
+        if (window.HarmonyBridge && typeof window.HarmonyBridge.saveState === 'function') {
+            window.HarmonyBridge.saveState('');
+        } else {
+            localStorage.removeItem('hy_state');
+        }
+    } catch (e) {}
+    resumeBanner.classList.remove('show');
+    initConversation(mode, false);
+});
+
+// ===== 模式初始化 =====
+function applyModeUI() {
+    modeBadge.style.display = 'inline-block';
+    modeBadge.textContent = mode === 'child' ? '子女代发起' : '本人讲述';
+    childHint.classList.toggle('show', mode === 'child');
+}
+
+function initConversation(m, persist) {
+    mode = m;
+    roundCount = 0;
+    firstReplyTracked = false;
+    deepTracked = false;
+    photos = [];
+    pendingPhoto = null;
+    updatePendingPhotoUI();
+    conversation = [
+        { role: 'system', content: mode === 'child' ? SYSTEM_PROMPT_CHILD : SYSTEM_PROMPT_SELF },
+        { role: 'assistant', content: mode === 'child' ? GREETING_CHILD : GREETING_SELF }
+    ];
+    applyModeUI();
+    renderMessages();
+    statusEl.textContent = mode === 'child'
+        ? '💡 您的孩子托我来听您讲故事——想聊就聊，不想聊也没关系'
+        : '💡 点 🎤 说话，或打字；点 📷 可以给我看老照片';
+    if (persist !== false) persistState();
+    track('start_click', mode);
+    speakText(mode === 'child' ? GREETING_CHILD : GREETING_SELF);
+}
+
+function requestMode() {
+    if (window.HarmonyBridge && typeof window.HarmonyBridge.getMode === 'function') {
+        const cbId = 'md_' + Date.now();
+        window.__bridgeCbs[cbId] = {
+            resolve: (modeJson) => { try { initConversation(JSON.parse(modeJson) === 'child' ? 'child' : 'self', false); } catch (e) {} },
+            reject: () => {}
+        };
+        window.HarmonyBridge.getMode(cbId);
+    } else {
+        const q = new URLSearchParams(location.search).get('mode');
+        initConversation(q === 'child' ? 'child' : 'self', false);
+    }
+}
+
+// ===== 设置面板 =====
 function openSettings() { settingsSheet.classList.add('open'); }
 function closeSettings() { settingsSheet.classList.remove('open'); }
 settingsBtn.addEventListener('click', openSettings);
@@ -532,26 +935,15 @@ settingsCloseBtn.addEventListener('click', closeSettings);
 settingsDoneBtn.addEventListener('click', closeSettings);
 settingsSheet.addEventListener('click', (e) => { if (e.target === settingsSheet) closeSettings(); });
 
-// ===== 渲染消息 =====
-function renderMessages() {
-    const msgs = conversation.filter(m => m.role !== 'system');
-    chatBox.innerHTML = msgs.map(m =>
-        `<div class="message ${m.role === 'assistant' ? 'ai' : 'user'}">${m.content}</div>`
-    ).join('');
-    chatBox.scrollTop = chatBox.scrollHeight;
-}
-
 // ===== 语音输出（朗读） =====
 const speechSupported = 'speechSynthesis' in window;
-let currentLang = 'zh-CN';   // 当前方言（语音识别与朗读共用）
+let currentLang = 'zh-CN';
 let zhVoice = null;
 let allVoices = [];
 
 function normalizeLang(lang) {
     return (lang || '').toLowerCase().replace(/_/g, '-');
 }
-
-// 根据当前方言，优先找发音最匹配的中文语音
 function pickVoice() {
     if (!speechSupported) return null;
     const prefs = {
@@ -565,7 +957,6 @@ function pickVoice() {
     }
     return allVoices.find(v => normalizeLang(v.lang).startsWith('zh')) || null;
 }
-
 function loadVoices() {
     if (!speechSupported) return;
     allVoices = speechSynthesis.getVoices();
@@ -576,10 +967,16 @@ if (speechSupported) {
     loadVoices();
 }
 
+function hasNativeSpeak() {
+    return !!(window.HarmonyBridge && typeof window.HarmonyBridge.speak === 'function');
+}
+function hasNativeSpeakAll() {
+    return !!(window.HarmonyBridge && typeof window.HarmonyBridge.speakAll === 'function');
+}
+
 function speakText(text) {
     if (!voiceOutputToggle.checked || !text) return;
-    // 鸿蒙原生朗读（网页朗读在鸿蒙内核上不可用）
-    if (window.HarmonyBridge && typeof window.HarmonyBridge.speak === 'function') {
+    if (hasNativeSpeak()) {
         window.HarmonyBridge.speak(text);
         return;
     }
@@ -587,35 +984,56 @@ function speakText(text) {
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
     if (zhVoice) u.voice = zhVoice;
-    u.lang = currentLang;   // 与所选方言一致
-    u.rate = 0.95;   // 语速稍慢，老人听得清
+    u.lang = currentLang;
+    u.rate = 0.95;
     u.pitch = 1;
     speechSynthesis.speak(u);
 }
 
-// 部分浏览器要求用户操作后才能朗读：第一次点按页面时"解锁"并念开场白
-let ttsUnlocked = false;
-function unlockTTS() {
-    if (ttsUnlocked || !speechSupported) return;
-    ttsUnlocked = true;
-    const silent = new SpeechSynthesisUtterance(' ');
-    silent.volume = 0;
-    speechSynthesis.speak(silent);
-    if (voiceOutputToggle.checked) {
-        setTimeout(() => speakText(conversation[1].content), 300);
+// 全文朗读（PRD-02 步10）：按句切段逐段播，一段完自动接下一段
+function chunkText(text, size) {
+    const pieces = String(text).match(/[^。！？；\n]+[。！？；\n]?/g) || [String(text)];
+    const chunks = [];
+    let cur = '';
+    for (const p of pieces) {
+        if ((cur + p).length > size && cur) { chunks.push(cur); cur = p; }
+        else { cur += p; }
     }
+    if (cur) chunks.push(cur);
+    return chunks;
 }
-document.addEventListener('pointerdown', unlockTTS, { once: true });
-document.addEventListener('keydown', unlockTTS, { once: true });
+function readAloudMemoir() {
+    const text = memoryBook.value.trim();
+    if (!text) return;
+    track('readaloud_click');
+    const chunks = chunkText(text, 120);
+    if (hasNativeSpeakAll()) {
+        window.HarmonyBridge.speakAll(JSON.stringify(chunks));
+        statusEl.textContent = '🔊 开始朗读回忆录全文…';
+        return;
+    }
+    if (!speechSupported) {
+        statusEl.textContent = '⚠️ 当前环境不支持朗读';
+        return;
+    }
+    speechSynthesis.cancel();
+    let i = 0;
+    const next = () => {
+        if (i >= chunks.length) { statusEl.textContent = '🔊 朗读完毕'; return; }
+        const u = new SpeechSynthesisUtterance(chunks[i++]);
+        if (zhVoice) u.voice = zhVoice;
+        u.lang = currentLang;
+        u.rate = 0.95;
+        u.onend = next;
+        speechSynthesis.speak(u);
+    };
+    next();
+}
 
 // ===== 语音输入（识别） =====
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-// 鸿蒙原生桥接的注入可能晚于页面脚本执行，因此用函数动态判断
 function hasNativeAsr() {
     return !!(window.HarmonyBridge && typeof window.HarmonyBridge.listenStart === 'function');
-}
-function hasNativeSpeak() {
-    return !!(window.HarmonyBridge && typeof window.HarmonyBridge.speak === 'function');
 }
 let harmonyAsr = hasNativeAsr();
 function asrAvailable() {
@@ -632,9 +1050,8 @@ function initRecognition() {
     if (!recognitionSupported || recognition) return;
     recognition = new SR();
     recognition.lang = currentLang;
-    recognition.continuous = true;       // 持续听，说完再点一下才结束
-    recognition.interimResults = true;   // 边说边显示
-
+    recognition.continuous = true;
+    recognition.interimResults = true;
     recognition.onresult = (event) => {
         let interim = '';
         for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -644,12 +1061,11 @@ function initRecognition() {
         }
         userInput.value = baseText + (baseText ? ' ' : '') + finalTranscript + interim;
     };
-
     recognition.onerror = (event) => {
         if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
             listening = false;
             updateMicUI();
-            statusEl.textContent = '⚠️ 请允许浏览器使用麦克风，然后重试';
+            statusEl.textContent = '⚠️ 请允许使用麦克风，然后重试';
             return;
         }
         if (event.error === 'language-not-supported') {
@@ -658,23 +1074,16 @@ function initRecognition() {
             statusEl.textContent = '⚠️ 此浏览器不支持这种方言的识别，请换回普通话试试';
             return;
         }
-        // 其他小故障：如果还在听，稍后自动重试
         if (listening) {
-            setTimeout(() => {
-                if (listening) safeStart();
-            }, 500);
+            setTimeout(() => { if (listening) safeStart(); }, 500);
         }
     };
-
     recognition.onend = () => {
         if (stopRequested) {
             stopRequested = false;
             finishListening();
         } else if (listening) {
-            // 引擎因停顿自动结束：自动重新开始，继续听
-            setTimeout(() => {
-                if (listening) safeStart();
-            }, 300);
+            setTimeout(() => { if (listening) safeStart(); }, 300);
         }
     };
 }
@@ -683,17 +1092,15 @@ function updateMicUI() {
     micBtn.classList.toggle('listening', listening);
     micBtn.textContent = listening ? '🔴' : '🎤';
 }
-
 function safeStart() {
     try {
         recognition.lang = currentLang;
         recognition.start();
     } catch (e) {}
 }
-
 function startListening() {
     if (!asrAvailable() || !voiceInputToggle.checked || listening) return;
-    if (speechSupported) speechSynthesis.cancel();   // 停止朗读，安静听老人说话
+    if (speechSupported) speechSynthesis.cancel();
     baseText = userInput.value.trim();
     finalTranscript = '';
     listening = true;
@@ -701,37 +1108,27 @@ function startListening() {
     updateMicUI();
     statusEl.textContent = '🎤 正在听您说话… 说完了请再点一下红色按钮';
     if (harmonyAsr) {
-        window.HarmonyBridge.listenStart();   // 鸿蒙原生语音识别
+        window.HarmonyBridge.listenStart();
     } else {
         initRecognition();
         safeStart();
     }
 }
-
 function stopListeningAndSend() {
     if (!listening) return;
     stopRequested = true;
     if (harmonyAsr) {
         window.HarmonyBridge.listenStop();
-        // 原生端停止后会通过 __bridgeOnAsrEnd 立即收尾，这里兜底
         setTimeout(() => {
-            if (listening) {
-                stopRequested = false;
-                finishListening();
-            }
+            if (listening) { stopRequested = false; finishListening(); }
         }, 1200);
     } else {
         try { recognition.stop(); } catch (e) {}
-        // 兜底：个别浏览器 stop 后不触发 onend
         setTimeout(() => {
-            if (listening) {
-                stopRequested = false;
-                finishListening();
-            }
+            if (listening) { stopRequested = false; finishListening(); }
         }, 1500);
     }
 }
-
 function finishListening() {
     listening = false;
     updateMicUI();
@@ -743,7 +1140,6 @@ function finishListening() {
         statusEl.textContent = '💡 没有听到内容，请再点一下 🎤 试试';
     }
 }
-
 micBtn.addEventListener('click', () => {
     if (listening) stopListeningAndSend();
     else startListening();
@@ -771,26 +1167,89 @@ voiceOutputToggle.addEventListener('change', () => {
 // ===== 方言切换 =====
 dialectSelect.addEventListener('change', () => {
     currentLang = dialectSelect.value;
-    zhVoice = pickVoice();   // 朗读声音也跟着换
+    zhVoice = pickVoice();
     if (!listening) {
         statusEl.textContent = '🎙️ 已切换到：' + dialectSelect.options[dialectSelect.selectedIndex].text;
     }
     if (listening) {
-        // 正在听时切换方言：中断后自动按新方言重新开始听
         try { recognition.abort(); } catch (e) {}
     }
+});
+
+// ===== 老照片（PRD-02 步6：照片是记忆锚点，子女可代传） =====
+function setPendingPhoto(dataUrl) {
+    pendingPhoto = dataUrl;
+    updatePendingPhotoUI();
+    statusEl.textContent = '📷 照片已选好，说一句照片里的故事再点发送（也可以直接发送）';
+}
+function updatePendingPhotoUI() {
+    if (pendingPhoto) {
+        pendingPhotoImg.src = pendingPhoto;
+        pendingPhotoWrap.classList.add('show');
+    } else {
+        pendingPhotoWrap.classList.remove('show');
+    }
+}
+photoBtn.addEventListener('click', () => {
+    if (window.HarmonyBridge && typeof window.HarmonyBridge.pickPhoto === 'function') {
+        window.HarmonyBridge.pickPhoto();
+    } else {
+        fileInput.click();
+    }
+});
+fileInput.addEventListener('change', () => {
+    const f = fileInput.files && fileInput.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = () => setPendingPhoto(reader.result);
+    reader.readAsDataURL(f);
+    fileInput.value = '';
+});
+removePhotoBtn.addEventListener('click', () => {
+    pendingPhoto = null;
+    updatePendingPhotoUI();
+    statusEl.textContent = '💡 点 🎤 说话，或打字；点 📷 可以给我看老照片';
 });
 
 // ===== 发送消息 =====
 async function sendMessage() {
     const text = userInput.value.trim();
-    if (!text || sendBtn.disabled) return;
+    if ((!text && !pendingPhoto) || sendBtn.disabled) return;
 
-    if (speechSupported) speechSynthesis.cancel();   // 停止正在说的话
-    conversation.push({ role: 'user', content: text });
+    if (speechSupported) speechSynthesis.cancel();
+
+    let content = text;
+    if (pendingPhoto) {
+        content = [
+            { type: 'text', text: text || '我想讲讲这张老照片。' },
+            { type: 'image_url', image_url: { url: pendingPhoto } }
+        ];
+        photos.push(pendingPhoto);
+    }
+    conversation.push({ role: 'user', content: content });
+    pendingPhoto = null;
+    updatePendingPhotoUI();
     userInput.value = '';
-    if (listening) { baseText = ''; finalTranscript = ''; }   // 防止旧文字重新出现
+    if (listening) { baseText = ''; finalTranscript = ''; }
+
+    // PRD-03 L2/L3 埋点
+    if (!firstReplyTracked) {
+        firstReplyTracked = true;
+        track('first_reply', 'chars=' + text.length);
+    }
+    roundCount++;
+    if (roundCount >= 5 && !deepTracked) {
+        deepTracked = true;
+        track('session_rounds', 'rounds=' + roundCount);
+    }
+    // 子女代发起：拒绝即停（意愿先行）
+    if (mode === 'child' && /不想|不用|不聊|算了|别问|不愿意/.test(text)) {
+        track('refuse', text.slice(0, 20));
+    }
+
+    userSentAlready = true;
     renderMessages();
+    persistState();
     sendBtn.disabled = true;
     statusEl.textContent = '🤔 正在思考…';
 
@@ -799,9 +1258,9 @@ async function sendMessage() {
         const reply = data.choices[0].message.content;
         conversation.push({ role: 'assistant', content: reply });
         renderMessages();
+        persistState();
         statusEl.textContent = '💬 继续讲，我在听…';
-        speakText(reply);   // 每次都朗读
-
+        speakText(reply);
     } catch (error) {
         statusEl.textContent = '❌ ' + error.message;
         conversation.pop();
@@ -812,23 +1271,19 @@ async function sendMessage() {
     }
 }
 
-// ===== 生成回忆录（DeepSeek v4 pro 整理版） =====
-const MEMOIR_SYSTEM_PROMPT = `你是一位耐心的回忆录整理者，帮助老人把口述的人生故事整理成留给后人的回忆录。
-请仔细阅读下面的访谈对话素材，以老人讲述的内容为唯一依据，撰写一部完整的回忆录。
-
-写作要求：
-1. 以第三人称叙述，把受访者称为"老人"或"他/她"，像一位长辈把一生的故事讲给子孙后代听。
-2. 语气朴实、亲切、温暖，像家常话娓娓道来；不要模仿史书或历史传记的腔调，不要过度渲染。
-3. 严格依据素材：只写老人在访谈中真实讲到的内容，尽量保留原话里的细节和意思，不添油加醋、不虚构情节、不做文学化夸张。
-4. 结构依次为（以下四个标记必须原样输出）：
-   ① 标题：拟一个简单朴实的标题（单独一行）。
-   ② 【开篇概要】：一段话，简要概括老人的人生经历。
-   ③ 【目录】：按时间顺序列出各章标题，每行一章，格式如"第一章 童年岁月"。
-   ④ 【正文】：按时间线分章展开，每章以"第X章 章名"开头，再写若干段落。
-5. 完整性优先：正文要覆盖素材中提到的各个时期和主要经历，不要省略、不要草草收尾；篇幅以把事情讲完整为准，不设上限。
-6. 只输出纯文本，不要使用任何 Markdown 符号（不要#、*、-、>等标记），不要写页码。`;
-
+// ===== 生成回忆录（第一人称 · 零添加 · 宁短勿编） =====
 let generating = false;
+let memoirConfirmed = false;
+
+function serializeForMemoir() {
+    return conversation.filter(m => m.role !== 'system').map(m => {
+        if (m.role === 'user') {
+            const photo = msgPhoto(m);
+            return { role: 'user', content: (msgText(m) || '') + (photo ? '（此处上传了一张老照片）' : '') };
+        }
+        return { role: 'assistant', content: msgText(m) };
+    });
+}
 
 async function generateMemoir() {
     if (generating) return;
@@ -838,29 +1293,27 @@ async function generateMemoir() {
         return;
     }
 
+    track('generate_click');
     generating = true;
     generateBtn.disabled = true;
     statusEl.textContent = '📝 正在整理您的回忆录，请稍候…';
 
     const memoirMessages = [
         { role: 'system', content: MEMOIR_SYSTEM_PROMPT },
-        ...msgs,
-        { role: 'user', content: '请根据以上全部访谈对话素材，撰写完整的回忆录。' }
+        ...serializeForMemoir(),
+        { role: 'user', content: '请根据以上全部访谈素材，撰写我的回忆录。' }
     ];
 
     try {
-        // 循环生成：若模型因长度限制截断（finish_reason=length），自动续写补全
+        // 分轮生成：每轮 2048 token，被截断自动续写，最多 8 轮
         let memoirText = '';
-        for (let round = 0; round < 5; round++) {
-            const data = await callDeepSeek(memoirMessages, 8192, 0.7);
+        for (let round = 0; round < 8; round++) {
+            const data = await callDeepSeek(memoirMessages, 2048, 0.7);
             const choice = data.choices[0];
             const chunk = (choice.message.content || '').trim();
             memoirText += chunk;
             memoirMessages.push({ role: 'assistant', content: choice.message.content });
-
-            if (choice.finish_reason !== 'length') break;   // 已完整生成
-
-            // 被截断：接着上一段断掉的地方继续写
+            if (choice.finish_reason !== 'length') break;
             memoirMessages.push({
                 role: 'user',
                 content: '上文被截断了。请接着刚才断掉的地方继续往下写，把正文完整写完；不要重复已经写过的内容，也不要再输出标题和目录。'
@@ -869,20 +1322,36 @@ async function generateMemoir() {
         }
 
         memoirText = memoirText.trim();
-
-        // 分页：开篇/目录/每章各自另起一页，每页底部标注页码
         const paged = paginateMemoir(memoirText);
-
         memoryBook.value = paged;
+        memoirConfirmed = false;
+        confirmBtn.textContent = '✅ 我确认';
+        confirmBtn.classList.remove('confirmed');
         openMemoirPanel();
-        statusEl.textContent = '📖 回忆录已生成！可直接修改，再点"下载保存"';
+        statusEl.textContent = '📖 回忆录已生成！听一听、改一改，确认后交给家人';
+        track('generate_success');
 
-        // 自动朗读开篇概要
-        const m = memoirText.match(/【开篇概要】\s*([\s\S]*?)(?=【目录】|$)/);
-        if (m && m[1]) speakText(m[1].trim().slice(0, 300));
+        // PRD-02 步8：五阶段完整性检查（只标未覆盖，绝不补写）
+        coverageNote.classList.remove('show');
+        const coverageMsgs = [
+            { role: 'system', content: COVERAGE_PROMPT },
+            { role: 'user', content: serializeForMemoir().map(m => m.content).join('\n').slice(0, 4000) }
+        ];
+        callDeepSeek(coverageMsgs, 200, 0.3).then((data) => {
+            const note = (data.choices[0].message.content || '').trim();
+            if (note) {
+                coverageNote.textContent = '📌 主线检查：' + note;
+                coverageNote.classList.add('show');
+            }
+        }).catch(() => {});
+
+        // 自动朗读开篇起头一小段（PRD-02 步10：用"听"代替"读"）
+        const firstPart = memoirText.replace(/^[^\n]*\n?/, '').split('\n').filter(s => s.trim() && !/^【目录】/.test(s)).slice(0, 3).join('，');
+        if (firstPart) speakText(firstPart.slice(0, 200));
 
     } catch (error) {
         statusEl.textContent = '❌ ' + error.message;
+        track('generate_fail', error.message.slice(0, 50));
     } finally {
         generating = false;
         generateBtn.disabled = false;
@@ -895,7 +1364,7 @@ function paginateMemoir(text, charsPerPage = 500) {
     const pages = [];
     let page = [];
     let len = 0;
-    let inToc = false;   // 目录里的"第X章"不是正文，不另起页
+    let inToc = false;
 
     const flush = () => {
         if (page.length) {
@@ -908,17 +1377,14 @@ function paginateMemoir(text, charsPerPage = 500) {
     for (const block of blocks) {
         const isSection = /^【.+】/.test(block);
         if (isSection) {
-            // 【正文】标记不单独成页，与第一章共用一页
             if (!block.includes('正文')) flush();
             inToc = block.includes('目录');
         }
         const isChapter = !inToc && /^第[一二三四五六七八九十百0-9０-９]+章/.test(block);
         if (isChapter) {
-            // 上一块若是标记行（如【正文】），不另起页
             const lastIsMarker = page.length > 0 && /^【|^第/.test(page[page.length - 1]);
             if (!lastIsMarker) flush();
         }
-
         page.push(block);
         len += block.length;
         if (len >= charsPerPage) flush();
@@ -931,21 +1397,34 @@ function paginateMemoir(text, charsPerPage = 500) {
 }
 
 // ===== 回忆录面板开关 =====
-function openMemoirPanel() {
-    memoirOverlay.classList.add('open');
-}
-function closeMemoirPanel() {
-    memoirOverlay.classList.remove('open');
-}
+function openMemoirPanel() { memoirOverlay.classList.add('open'); }
+function closeMemoirPanel() { memoirOverlay.classList.remove('open'); }
 memoirCloseBtn.addEventListener('click', closeMemoirPanel);
 memoirOverlay.addEventListener('click', (e) => {
     if (e.target === memoirOverlay) closeMemoirPanel();
 });
 
-// ===== 下载回忆录为 txt 文件 =====
+// ===== 老人点头定稿（PRD-02 步11/12） =====
+function confirmMemoir() {
+    memoirConfirmed = !memoirConfirmed;
+    if (memoirConfirmed) {
+        confirmBtn.textContent = '✅ 已定稿';
+        confirmBtn.classList.add('confirmed');
+        statusEl.textContent = '🎉 回忆录已定稿！可以下载交给家人了';
+        track('confirm_click', 'confirm');
+    } else {
+        confirmBtn.textContent = '✅ 我确认';
+        confirmBtn.classList.remove('confirmed');
+        statusEl.textContent = '💡 继续修改后，再点"我确认"定稿';
+        track('confirm_click', 'unconfirm');
+    }
+}
+
+// ===== 下载回忆录为 txt 文件（开放文本格式，长期可读） =====
 function downloadMemoir() {
     const text = memoryBook.value;
     if (!text.trim()) return;
+    track('download_click');
     const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -962,9 +1441,13 @@ function downloadMemoir() {
 renderMessages();
 userInput.focus();
 
-// 检查配置：公网部署走后端代理时无需本地 Key；本地打开则需要 config.js
 (async () => {
-    if (hasNativeAsr()) return;   // 鸿蒙应用内：Key 由原生设置页管理
+    if (hasNativeAsr()) {
+        // 鸿蒙应用内：模式由原生桥接回传；本地 Key 由原生层保管
+        requestMode();
+        checkResume();
+        return;
+    }
     let hasBackend = false;
     try {
         const r = await fetch('/api/health');
@@ -973,7 +1456,10 @@ userInput.focus();
     if (!hasBackend && DEEPSEEK_API_KEY === 'YOUR_API_KEY_HERE') {
         statusEl.textContent = '⚠️ 请创建 config.js 并填入 API Key（参考 config.example.js），或用 server.js 部署';
     }
+    requestMode();
+    checkResume();
 })();
+
 if (!recognitionSupported) {
     voiceInputToggle.checked = false;
     voiceInputToggle.disabled = true;
@@ -982,7 +1468,6 @@ if (!recognitionSupported) {
     micBtn.style.display = 'none';
     statusEl.textContent = '⚠️ 此浏览器不支持语音输入，请换用 Chrome 或 Edge 浏览器';
 }
-// 鸿蒙原生桥接注入可能晚于页面脚本：延迟再探测一次并启用语音输入/输出
 setTimeout(() => {
     if (!harmonyAsr && hasNativeAsr()) {
         harmonyAsr = true;

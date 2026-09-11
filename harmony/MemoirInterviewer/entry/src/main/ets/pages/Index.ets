@@ -1,7 +1,10 @@
 /**
- * 原生欢迎页：与网页版欢迎页同款设计（暖色渐变 + 中央徽标 + 大按钮），
- * 提高原生度，降低"纯网页套壳"的审核风险。
- */@Entry
+ * 原生欢迎页：双模式入口（PRD-02 V1.1 三角色模型）
+ * - 本人讲述：老人自己发起，AI 直接开场
+ * - 子女代发起：受托开场（"您的孩子托我来听您讲故事"），意愿先行、拒绝即停，
+ *   子女可陪同但不得代答；访谈全程由子女陪同提醒，讲的是谁，话就是谁的。
+ */
+@Entry
 @Component
 struct Index {
   build() {
@@ -44,27 +47,52 @@ struct Index {
           .fontSize(20)
           .fontColor('#8A7660')
           .letterSpacing(3)
-          .margin({ top: 18, bottom: 56 })
+          .margin({ top: 18, bottom: 48 })
 
-        Button('📜 开启回忆录', { type: ButtonType.Capsule })
+        Button('📜 本人讲述', { type: ButtonType.Capsule })
           .fontSize(26)
           .fontColor(Color.White)
           .height(72)
+          .width('72%')
           .backgroundColor('#8A7A6A')
           .shadow({ radius: 30, color: 'rgba(122,94,58,0.35)', offsetY: 12 })
           .onClick(() => {
-            this.getUIContext().getRouter().pushUrl({ url: 'pages/Interview' });
+            this.getUIContext().getRouter().pushUrl({ url: 'pages/Interview', params: { mode: 'self' } });
           })
+
+        Text('老人自己发起，直接开始聊')
+          .fontSize(15)
+          .fontColor('#8A7660')
+          .margin({ top: 10 })
+
+        Button('❤️ 子女代发起', { type: ButtonType.Capsule })
+          .fontSize(26)
+          .fontColor('#FFFFFF')
+          .height(72)
+          .width('72%')
+          .backgroundColor('#B07A62')
+          .shadow({ radius: 30, color: 'rgba(176,122,98,0.35)', offsetY: 12 })
+          .margin({ top: 30 })
+          .onClick(() => {
+            this.getUIContext().getRouter().pushUrl({ url: 'pages/Interview', params: { mode: 'child' } });
+          })
+
+        Text('想给孙子孙女留一本——由您发起，老人愿意才讲')
+          .fontSize(15)
+          .fontColor('#8A7660')
+          .width('86%')
+          .textAlign(TextAlign.Center)
+          .margin({ top: 10 })
 
         Row({ space: 18 }) {
           Text('🎤 开口即聊').fontSize(17).fontColor('#6D5A46')
           Text('🔊 温柔朗读').fontSize(17).fontColor('#6D5A46')
-          Text('🎙️ 方言陪伴').fontSize(17).fontColor('#6D5A46')
+          Text('🖼️ 老照片讲故事').fontSize(17).fontColor('#6D5A46')
         }
         .padding({ top: 12, bottom: 12, left: 24, right: 24 })
         .borderRadius(999)
         .backgroundColor('rgba(255,255,255,0.55)')
-        .margin({ top: 60 })
+        .margin({ top: 44 })
       }
 
       Blank()

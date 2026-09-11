@@ -107,6 +107,34 @@
         }
         .btn-memoir:active { transform: translateY(0); }
 
+        /* 子女代发起按钮 */
+        .btn-child {
+            display: inline-block;
+            text-decoration: none;
+            font-size: 22px;
+            letter-spacing: 4px;
+            color: #fff;
+            background: linear-gradient(135deg, #c08a6d 0%, #b07a62 100%);
+            padding: 18px 56px;
+            border-radius: 999px;
+            box-shadow: 0 14px 34px rgba(176, 122, 98, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            animation: rise 1s 0.32s ease both;
+            margin-top: 24px;
+        }
+        .btn-child:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 46px rgba(176, 122, 98, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+        }
+        .btn-child:active { transform: translateY(0); }
+        .btn-child-hint {
+            margin-top: 10px;
+            font-size: 15px;
+            color: #8a7660;
+            letter-spacing: 1px;
+            animation: rise 1s 0.36s ease both;
+        }
+
         /* 功能标签 */
         .features {
             margin-top: 66px;
@@ -149,11 +177,13 @@
         <div class="emblem">📖</div>
         <h1>回忆录访谈员</h1>
         <p class="tagline">把一生的故事，慢慢讲给后人听</p>
-        <a class="btn-memoir" href="memoir.html">📜 开启回忆录</a>
+        <a class="btn-memoir" href="memoir.html?mode=self">📜 本人讲述</a>
+        <a class="btn-child" href="memoir.html?mode=child">❤️ 子女代发起</a>
+        <p class="btn-child-hint">想给孙子孙女留一本——由您发起，老人愿意才讲</p>
         <div class="features">
             <span class="feature">🎤 开口即聊</span>
             <span class="feature">🔊 温柔朗读</span>
-            <span class="feature">🎙️ 方言陪伴</span>
+            <span class="feature">🖼️ 老照片讲故事</span>
         </div>
     </main>
 

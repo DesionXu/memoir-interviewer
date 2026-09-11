@@ -6,9 +6,19 @@ import { SettingsService } from './SettingsService';
 
 const DOMAIN: number = 0x0000;
 
+export interface ChatImageUrl {
+  url: string;
+}
+
+export interface ChatContentItem {
+  type: string;
+  text?: string;
+  image_url?: ChatImageUrl;
+}
+
 export interface ChatMessage {
   role: string;
-  content: string;
+  content: string | ChatContentItem[];   // 多模态：老照片随消息发送（PRD-02 步6 读图引导）
 }
 
 /**
