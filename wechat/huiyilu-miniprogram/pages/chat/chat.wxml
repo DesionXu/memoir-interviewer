@@ -12,6 +12,7 @@
     <view wx:for="{{messages}}" wx:key="index" class="message {{item.role}}">
       <image wx:if="{{item.photo}}" class="photo-attach" src="{{item.photo}}" mode="widthFix"></image>
       <text wx:if="{{item.content}}" user-select>{{item.content}}</text>
+      <view wx:if="{{item.role === 'ai' && item.content}}" class="replay" data-index="{{index}}" catchtap="replayMessage">{{speaking ? '⏸ 停止' : '🔊 再听一遍'}}</view>
       <text wx:if="{{item.role === 'ai'}}" class="ai-note">内容由 AI 生成，仅供参考</text>
     </view>
     <view id="msg-bottom"></view>
@@ -49,12 +50,16 @@
       <switch checked="{{voiceInputOn}}" color="#6f9c52" bindchange="onVoiceInputToggle"></switch>
     </view>
     <view class="setting-row">
+      <text class="s-label">🔊 语音播报</text>
+      <switch checked="{{voiceOutputOn}}" color="#6f9c52" bindchange="onVoiceOutputToggle"></switch>
+    </view>
+    <view class="setting-row">
       <text class="s-label">🎙️ 方言</text>
       <picker mode="selector" range="{{dialects}}" value="{{dialectIndex}}" bindchange="onDialectChange">
         <view class="dialect">{{dialects[dialectIndex]}}</view>
       </picker>
     </view>
-    <view class="dialect-note">说明：语音识别支持普通话与粤语；台湾国语按普通话识别，其余方言二期接入。</view>
+    <view class="dialect-note">说明：语音识别与朗读支持普通话、粤语；台湾国语按普通话处理，其余方言二期接入。</view>
     <button class="sheet-done" bindtap="closeSettings">完 成</button>
   </view>
 
@@ -92,6 +97,7 @@
     <textarea class="memoir-edit" wx:else value="{{memoirRaw}}" bindinput="onMemoirInput" maxlength="-1"></textarea>
 
     <view class="memoir-actions">
+      <button class="act-btn act-read" bindtap="readMemoirAloud">{{speaking ? '⏸ 停止朗读' : '🔊 朗读全文'}}</button>
       <button class="act-btn act-edit" bindtap="toggleEdit">{{editing ? '👁 预览' : '✏️ 修改'}}</button>
       <button class="act-btn act-confirm" bindtap="confirmMemoir">{{confirmed ? '✅ 已定稿' : '✅ 我确认'}}</button>
       <button class="act-btn act-download" bindtap="downloadMemoir">💾 下载</button>

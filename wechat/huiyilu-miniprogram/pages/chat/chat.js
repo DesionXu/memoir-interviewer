@@ -12,6 +12,9 @@ try {
   asrPlugin = null;
 }
 
+// 语音播报（老人眼睛花，AI 的话要能念出来）
+const { TtsPlayer } = require('../../utils/tts.js');
+
 // ===== 提示词（与 Web 版一致） =====
 const SYSTEM_PROMPT_SELF = `你是一位耐心、温和的"回忆录访谈员"，陪伴一位长辈口述他的人生故事，最终整理成一本第一人称的回忆录，留给他的家人后代。
 
@@ -73,6 +76,8 @@ Page({
     generating: false,
     settingsOpen: false,
     voiceInputOn: true,
+    voiceOutputOn: true,
+    speaking: false,
     dialects: ['普通话', '粤语（广东话）', '台湾国语'],
     dialectIndex: 0,
     memoirOpen: false,
@@ -93,8 +98,39 @@ Page({
 
   onLoad(options) {
     const mode = options && options.mode === 'child' ? 'child' : 'self';
+    // 语音播报偏好（默认开：老人看字费力）
+    const savedVoice = wx.getStorageSync('voiceOutputOn');
+    this.setData({ voiceOutputOn: savedVoice === '' ? true : !!savedVoice });
+    this.initTts();
     this.initConversation(mode);
     this.initAsr();
+  },
+
+  onUnload() {
+    if (this.tts) this.tts.destroy();
+  },
+
+  // ===== 语音播报（TTS） =====
+  initTts() {
+    this.tts = new TtsPlayer({
+      onError: (msg) => {
+        this.setData({ status: '⚠️ ' + msg });
+      },
+      onSpeakingChange: (speaking) => {
+        this.setData({ speaking });
+      }
+    });
+  },
+
+  speakText(text) {
+    if (!this.data.voiceOutputOn || !text) return;
+    if (!this.tts) this.initTts();
+    const lang = this.data.dialectIndex === 1 ? 'zh_HK' : 'zh_CN';
+    this.tts.speak(text, lang);
+  },
+
+  stopSpeaking() {
+    if (this.tts) this.tts.stop();
   },
 
   initConversation(mode) {
@@ -112,6 +148,8 @@ Page({
         : '💡 点 🎤 说话，或打字；点 📷 可以给我看老照片'
     });
     this.scrollBottom();
+    // 开场白直接念出来：老人不必看屏幕
+    this.speakText(mode === 'child' ? GREETING_CHILD : GREETING_SELF);
   },
 
   scrollBottom() {
@@ -156,6 +194,7 @@ Page({
   async sendMessage() {
     const text = (this.data.inputText || '').trim();
     if (!text || this.data.sending) return;
+    this.stopSpeaking();   // 老人在说话/发送时不要抢话
     this.conversation.push({ role: 'user', content: text });
     const messages = this.data.messages.concat([{ role: 'user', content: text }]);
     this.setData({ messages, inputText: '', sending: true, status: '🤔 正在思考…' });
@@ -169,6 +208,7 @@ Page({
         status: '💬 继续讲，我在听…'
       });
       this.scrollBottom();
+      this.speakText(reply);
     } catch (err) {
       this.conversation.pop();
       this.setData({ status: '❌ ' + (err.message || '发送失败，请重试') });
@@ -179,6 +219,7 @@ Page({
 
   // ===== 老照片（记忆锚点） =====
   choosePhoto() {
+    this.stopSpeaking();
     wx.chooseMedia({
       count: 1,
       mediaType: ['image'],
@@ -246,6 +287,7 @@ Page({
         status: '💬 继续讲，我在听…'
       });
       this.scrollBottom();
+      this.speakText(reply);
     } catch (err) {
       // 视觉接口异常时回退：文字告知 AI，照片仍保留
       try {
@@ -260,6 +302,7 @@ Page({
           status: '💬 继续讲，我在听…'
         });
         this.scrollBottom();
+        this.speakText(reply);
       } catch (e2) {
         this.setData({ status: '❌ ' + (e2.message || '发送失败') });
       }
@@ -318,6 +361,7 @@ Page({
     this.asrBaseText = (this.data.inputText || '').trim();
     this.asrFinalText = '';
     this.asrStopToSend = false;
+    this.stopSpeaking();   // 收音时静音，免得把 AI 的话录进去
     this.setData({ listening: true, status: '🎤 正在听您说话… 说完了请再点一下红色按钮' });
     try {
       // 插件 0.3.10：普通话 zh_CN、粤语 zh_HK；台湾国语按普通话识别
@@ -526,6 +570,50 @@ Page({
   },
   onVoiceInputToggle(e) {
     this.setData({ voiceInputOn: e.detail.value });
+  },
+  onVoiceOutputToggle(e) {
+    const on = e.detail.value;
+    this.setData({ voiceOutputOn: on });
+    wx.setStorageSync('voiceOutputOn', on);
+    if (!on) this.stopSpeaking();
+  },
+
+  // 逐条重听：点 🔊 再念一遍这句；正在念则停下
+  replayMessage(e) {
+    const idx = e.currentTarget.dataset.index;
+    const msg = this.data.messages[idx];
+    if (!msg || !msg.content) return;
+    if (this.data.speaking) {
+      this.stopSpeaking();
+      this.setData({ status: '🔇 已停止朗读' });
+      return;
+    }
+    if (!this.data.voiceOutputOn) {
+      wx.showToast({ title: '请先在设置里开启语音播报', icon: 'none' });
+      return;
+    }
+    this.speakText(msg.content);
+    this.setData({ status: '🔊 正在念给您听…' });
+  },
+
+  // 朗读整本回忆录
+  readMemoirAloud() {
+    const raw = (this.data.memoirRaw || '').replace(/【照片(\d+)】/g, '');
+    if (!raw.trim()) {
+      wx.showToast({ title: '请先生成回忆录', icon: 'none' });
+      return;
+    }
+    if (this.data.speaking) {
+      this.stopSpeaking();
+      this.setData({ status: '🔇 已停止朗读' });
+      return;
+    }
+    if (!this.data.voiceOutputOn) {
+      wx.showToast({ title: '请先在设置里开启语音播报', icon: 'none' });
+      return;
+    }
+    this.speakText(raw.replace(/\n+/g, '。'));
+    this.setData({ status: '🔊 正在为您朗读回忆录，想停就再点一下' });
   },
   onDialectChange(e) {
     this.setData({ dialectIndex: Number(e.detail.value) });

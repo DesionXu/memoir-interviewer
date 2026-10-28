@@ -265,12 +265,12 @@
   background: #fcf8f0;
   box-sizing: border-box;
 }
-.memoir-actions { display: flex; gap: 16rpx; margin-top: 24rpx; flex-shrink: 0; }
+.memoir-actions { display: flex; flex-wrap: wrap; gap: 16rpx; margin-top: 24rpx; flex-shrink: 0; }
 .act-btn {
-  flex: 1;
-  padding: 24rpx 0;
+  flex: 1 1 45%;
+  padding: 22rpx 0;
   border-radius: 999rpx;
-  font-size: 32rpx;
+  font-size: 28rpx;
 }
 .act-edit { background: #f3ede4; color: #4a3a2c; border: 3rpx solid #d9cdbb; }
 .act-confirm { background: #f3ede4; color: #4a3a2c; border: 3rpx solid #6f9c52; }
@@ -278,3 +278,15 @@
 
 .ai-note { display: block; margin-top: 8rpx; font-size: 20rpx; color: #b0a094; }
 .memoir-ai-note { padding: 16rpx 30rpx 4rpx; font-size: 22rpx; color: #b0a094; text-align: center; }
+
+/* 语音播报 */
+.replay {
+  display: inline-block;
+  margin-top: 10rpx;
+  padding: 6rpx 18rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  color: #6f9c52;
+  background: #eef4e7;
+}
+.act-read { background: #8a7a6a; color: #fff; }
