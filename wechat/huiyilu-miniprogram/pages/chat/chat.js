@@ -57,7 +57,7 @@ const MEMOIR_SYSTEM_PROMPT = `你是一位回忆录整理者，把访谈对话�
    ② 【开篇】：固定写这一句——"我把这辈子记得的事，讲给家里人听。"（不要写别的）
    ③ 【目录】：按时间顺序列出各章，每行一章，格式如"第一章 童年的大槐树"。
    ④ 【正文】：按时间线分章展开，每章以"第X章 章名"开头，再写若干段落；段落内容全部来自素材。
-5. 照片：素材中提到照片处标注【照片N】（N 从 1 开始），不编造照片内容。
+5. 照片：素材中出现【照片N】标记的地方，正文对应位置必须原样保留【照片N】标记（每张照片至少出现一次）；照片的年代、人物、场景只能依据访谈素材里老人自己的说法来写，看不清、没讲到的细节一律不补，不得编造照片内容。
 6. 完整性优先：素材中提到的各个时期都要覆盖，不省略、不草草收尾。
 7. 只输出纯文本，不要使用任何 Markdown 符号，不要写页码。`;
 
@@ -226,16 +226,42 @@ Page({
       sourceType: ['album', 'camera'],
       success: async (res) => {
         const file = res.tempFiles[0].tempFilePath;
-        const compressed = await this.compressImage(file);
-        const base64 = await this.readBase64(compressed);
-        if (!base64) {
-          wx.showToast({ title: '照片读取失败', icon: 'none' });
-          return;
+        // 压缩到长边 1024，既省流量，也便于模型读图
+        const compressed = await this.compressImage(file, 1024, 70);
+        this.setData({ status: '📷 照片收到了，正在上传…' });
+
+        // 优先上传云存储：只把临时链接交给云函数，避开 callFunction 的 100KB 传输上限
+        let cloudUrl = '';
+        try {
+          const cloudPath = 'photos/' + Date.now() + '_' +
+            Math.floor(Math.random() * 1000000) + '.jpg';
+          const up = await wx.cloud.uploadFile({ cloudPath, filePath: compressed });
+          if (up && up.fileID) {
+            const urlRes = await wx.cloud.getTempFileURL({ fileList: [up.fileID] });
+            const item = urlRes && urlRes.fileList && urlRes.fileList[0];
+            cloudUrl = (item && item.tempFileURL) || '';
+          }
+        } catch (e) {
+          cloudUrl = '';
         }
-        this.photos.push({ dataUrl: 'data:image/jpeg;base64,' + base64, path: compressed });
+
+        const record = { path: compressed, cloudUrl };
+        // 云存储不可用时：回退到小尺寸 base64（控制在 100KB 以内）
+        if (!cloudUrl) {
+          const small = await this.compressImage(file, 640, 45);
+          const base64 = await this.readBase64(small);
+          if (!base64) {
+            wx.showToast({ title: '照片读取失败', icon: 'none' });
+            return;
+          }
+          record.path = small;
+          record.dataUrl = 'data:image/jpeg;base64,' + base64;
+        }
+
+        this.photos.push(record);
         const idx = this.photos.length;
         this.setData({
-          messages: this.data.messages.concat([{ role: 'user', content: '', photo: compressed }]),
+          messages: this.data.messages.concat([{ role: 'user', content: '', photo: record.path }]),
           status: '📷 照片收到了，我看看…'
         });
         this.scrollBottom();
@@ -244,11 +270,12 @@ Page({
     });
   },
 
-  compressImage(src) {
+  compressImage(src, maxWidth, quality) {
     return new Promise((resolve) => {
       wx.compressImage({
         src,
-        quality: 60,
+        quality: quality || 60,
+        compressedWidth: maxWidth || 1024,   // 只给宽，按比例缩放
         success: (r) => resolve(r.tempFilePath),
         fail: () => resolve(src)
       });
@@ -268,17 +295,39 @@ Page({
 
   async sendImageMessage(idx) {
     if (this.data.sending) return;
-    this.setData({ sending: true, status: '🤔 正在思考…' });
     const photo = this.photos[idx - 1];
+    const imageUrl = photo && (photo.cloudUrl || photo.dataUrl);
+    if (!imageUrl) {
+      this.setData({ status: '⚠️ 照片处理失败，请重新上传' });
+      return;
+    }
+    this.setData({ sending: true, status: '👀 我正在看这张照片…' });
+
     const visionMsg = {
       role: 'user',
+      // photo 字段用于成稿时把这张照片归位到【照片N】
+      photo: photo.path,
       content: [
         { type: 'text', text: '我给您看一张老照片。（这是第' + idx + '张照片）' },
-        { type: 'image_url', image_url: { url: photo.dataUrl } }
+        { type: 'image_url', image_url: { url: imageUrl } }
       ]
     };
+
+    // 读图专用指令：只作用于这一次请求，不写进访谈记录（避免污染回忆录素材）
+    const baseSystem = (this.conversation[0] && typeof this.conversation[0].content === 'string')
+      ? this.conversation[0].content : '';
+    const visionSystem = {
+      role: 'system',
+      content: baseSystem + '\n\n【当前情境】老人刚上传了一张老照片（附图）。\n' +
+        '要求：\n' +
+        '1. 先用一两句话说出照片里能确定看到的内容：大概的年代感、场景、人物动作、衣着或物件。看不清、猜不准的，绝不编造。\n' +
+        '2. 然后只问一个与照片内容直接相关的具体问题，引导老人讲这张照片里的故事（例如"照片里右边这位是谁？"）。\n' +
+        '3. 只问一个问题，不要连续发问，不要列举。'
+    };
+
     try {
-      const data = await this.callDeepSeek(this.conversation.concat([visionMsg]), 1024, 0.8);
+      const callMessages = [visionSystem].concat(this.conversation.slice(1)).concat([visionMsg]);
+      const data = await this.callDeepSeek(callMessages, 1024, 0.7);
       const reply = data.choices[0].message.content;
       this.conversation.push(visionMsg);
       this.conversation.push({ role: 'assistant', content: reply });
@@ -289,23 +338,10 @@ Page({
       this.scrollBottom();
       this.speakText(reply);
     } catch (err) {
-      // 视觉接口异常时回退：文字告知 AI，照片仍保留
-      try {
-        const data = await this.callDeepSeek(
-          this.conversation.concat([{ role: 'user', content: '（老人上传了一张老照片，请引导他讲讲照片里的人与事）' }]),
-          1024, 0.8);
-        const reply = data.choices[0].message.content;
-        this.conversation.push({ role: 'user', content: '' });
-        this.conversation.push({ role: 'assistant', content: reply });
-        this.setData({
-          messages: this.data.messages.concat([{ role: 'ai', content: reply }]),
-          status: '💬 继续讲，我在听…'
-        });
-        this.scrollBottom();
-        this.speakText(reply);
-      } catch (e2) {
-        this.setData({ status: '❌ ' + (e2.message || '发送失败') });
-      }
+      // 不再用"请讲讲照片里的人"糊弄过去——明确告诉用户没识别成功，可以重试
+      const msg = (err && err.message) || '未知错误';
+      this.setData({ status: '⚠️ 照片识别失败：' + msg + '（可以再点 📷 重试）' });
+      wx.showToast({ title: '照片识别失败，请重试', icon: 'none' });
     } finally {
       this.setData({ sending: false });
     }
@@ -440,13 +476,32 @@ Page({
     }
   },
 
+  // 取消息的文字（兼容多模态数组）
+  contentText(m) {
+    if (!m) return '';
+    if (typeof m.content === 'string') return m.content;
+    if (Array.isArray(m.content)) {
+      return m.content.filter(p => p && p.type === 'text').map(p => p.text || '').join('');
+    }
+    return '';
+  },
+
+  // 序列化访谈素材：照片按上传顺序转成【照片N】，供成稿时归位
   serializeForMemoir() {
+    const pathToIndex = {};
+    this.photos.forEach((p, i) => { pathToIndex[p.path] = i + 1; });
     return this.conversation.filter(m => m.role !== 'system').map(m => {
       if (m.role === 'user') {
-        const imgNote = '';
-        return { role: 'user', content: imgNote + (typeof m.content === 'string' ? m.content : '（上传了照片）') };
+        const text = this.contentText(m);
+        let mark = '';
+        if (m.photo && pathToIndex[m.photo]) {
+          mark = '【照片' + pathToIndex[m.photo] + '】';
+        } else if (Array.isArray(m.content) && m.content.some(p => p && p.type === 'image_url')) {
+          mark = '【照片】';
+        }
+        return { role: 'user', content: text + mark };
       }
-      return { role: 'assistant', content: m.content };
+      return { role: 'assistant', content: this.contentText(m) };
     });
   },
 
@@ -475,7 +530,7 @@ Page({
           if (i % 2 === 1) {
             const idx = parseInt(p, 10) - 1;
             const ph = this.photos[idx];
-            if (ph) segs.push({ type: 'photo', photo: ph.path });
+            if (ph) segs.push({ type: 'photo', photo: ph.path, index: idx + 1 });
             else segs.push({ type: 'text', text: '【照片' + p + '】' });
           } else if (p.trim()) {
             segs.push({ type: 'text', text: p });
@@ -484,6 +539,24 @@ Page({
         if (segs.length) blocks.push({ type: 'para', segs });
       }
     });
+
+    // 老照片必须进回忆录：没被模型归位的照片，统一放到文末「附：老照片」
+    const used = {};
+    blocks.forEach(b => {
+      (b.segs || []).forEach(sg => {
+        if (sg.type === 'photo' && sg.index) used[sg.index] = true;
+      });
+    });
+    const leftover = [];
+    this.photos.forEach((p, i) => {
+      if (!used[i + 1]) leftover.push({ photo: p.path, index: i + 1 });
+    });
+    if (leftover.length) {
+      blocks.push({ type: 'chap', text: '附：老照片' });
+      leftover.forEach(item => {
+        blocks.push({ type: 'para', segs: [{ type: 'photo', photo: item.photo, index: item.index }] });
+      });
+    }
     return { title, blocks };
   },
 
